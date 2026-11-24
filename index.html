@@ -2,116 +2,177 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Watchlist">
 <title>Watchlist EV+</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* VOICE: terminal de marché, sobre, chiffres d'abord
-   IDEA: un écran de cotation Bloomberg / Trade Republic
-   PICTURE: le tableau live et le Top 10 EV+ sont l'image
-   COLOUR+TYPE: noir profond, blanc, vert signal, rouge alerte ; Inter Tight + Plex Mono pour les chiffres
-   LAYOUT: barre de contrôle, Top 10, filtres, tableau, fiche en panneau */
-:root{color-scheme:dark;--bg:#0a0c0b;--pan:#121614;--line:#232a26;--ink:#eef2ef;--mut:#8a958f;--go:#2fd18b;--near:#e8c547;--no:#ef5b5b;--acc:#7cc4ff}
-*{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Inter Tight",system-ui,sans-serif;overflow-x:clip}
-.num,td.r{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-header{padding:20px max(4vw,14px) 8px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between}
-h1{font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0;font-weight:800;text-wrap:balance}
-h2{font-size:20px;margin:0 0 10px}
-.sub{color:var(--mut);font-size:13px}
-.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
-label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
-input,select,button{font:inherit;font-size:16px;color:var(--ink);background:var(--pan);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:0 12px}
-input:focus,select:focus,button:focus{outline:2px solid var(--acc);outline-offset:1px}
-button{cursor:pointer;font-weight:600}
-button.pri{background:var(--go);color:#04140b;border-color:var(--go)}
-.band{padding:10px max(4vw,14px)}
-.state{font-size:13px;color:var(--mut);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--mut)}
-.top{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.card{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer}
-.card:hover{border-color:var(--acc)}
-.card b{font-size:16px}.card .big{font-size:22px;font-weight:600}
-.rk{color:var(--mut);font-size:13px}
-.flt{display:flex;flex-wrap:wrap;gap:8px}
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th{text-align:left;font-size:12px;color:var(--mut);font-weight:600;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;position:sticky;top:0;background:var(--bg)}
-td{padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
-td.r,th.r{text-align:right}
-tr.row{cursor:pointer}tr.row:hover td{background:#141a17}
-.pos{color:var(--go)}.neg{color:var(--no)}
-.badge{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
-.b-go{color:var(--go);border-color:var(--go)}.b-near{color:var(--near);border-color:var(--near)}.b-no{color:var(--no);border-color:#5a2a2a}.b-na{color:var(--mut)}
-.b-dup{color:#ffb4a8;border-color:#6b3b34}
-.sec td{background:#0f1311;color:var(--acc);font-weight:600;font-size:13px}
-#sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:9}
-#sheet.on{display:block}
-#sheet .in{position:absolute;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--pan);border-left:1px solid var(--line);overflow-y:auto;padding:18px}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
-.tier{border:1px solid var(--line);border-radius:10px;padding:10px}
-.tier .big{font-size:19px;font-weight:600}
-.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px 12px;font-size:13px}
-.kv span{color:var(--mut);display:block}
-ul{padding-left:18px;margin:6px 0}
-.note{font-size:13px;color:var(--mut)}
-details{margin-top:14px}summary{cursor:pointer;color:var(--acc);min-height:44px;display:flex;align-items:center}
-@media(max-width:600px){.grid3{grid-template-columns:1fr}td,th{padding:7px 6px}table{font-size:13px}.hide-s{display:none}}
-@media(prefers-reduced-motion:no-preference){.card,tr.row td{transition:background .15s,border-color .15s}}
+:root{color-scheme:light dark;
+  --bg:#f2f2f7;--card:#fff;--card2:#f2f2f7;--ink:#000;--ink2:rgba(60,60,67,.6);--ink3:rgba(60,60,67,.3);--sep:rgba(60,60,67,.18);
+  --tint:#007aff;--go:#34c759;--near:#ff9f0a;--no:#ff3b30;--fill:rgba(120,120,128,.12);
+  --glass:rgba(242,242,247,.72);--scrim:rgba(0,0,0,.28);--shadow:0 10px 40px rgba(0,0,0,.12)}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);
+  --tint:#0a84ff;--go:#30d158;--near:#ffd60a;--no:#ff453a;--fill:rgba(118,118,128,.24);
+  --glass:rgba(22,22,24,.72);--scrim:rgba(0,0,0,.5);--shadow:0 10px 40px rgba(0,0,0,.5)}}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:100%/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;font-size:1.0625rem;overflow-x:clip;
+  padding:0 max(env(safe-area-inset-right),0px) calc(env(safe-area-inset-bottom) + 32px) max(env(safe-area-inset-left),0px)}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+/* Barre translucide : le contenu défile dessous */
+.bar{position:sticky;top:0;z-index:5;padding:calc(env(safe-area-inset-top) + 6px) 16px 6px;display:flex;align-items:center;gap:8px;
+  background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+.bar .mini{flex:1;font-weight:600;font-size:1.0625rem;letter-spacing:-.01em;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
+.bar.scrolled .mini{opacity:1;transform:none}
+.bar.scrolled{box-shadow:0 .5px 0 var(--sep)}
+.ib{width:44px;height:44px;border-radius:22px;border:0;background:transparent;color:var(--tint);display:grid;place-items:center;cursor:pointer;font:inherit;text-decoration:none}
+.ib svg{width:22px;height:22px}
+.press{transition:transform .1s ease-out}
+.press:active{transform:scale(.96)}
+.ib.spin svg{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+h1{font-size:2.125rem;line-height:1.1;letter-spacing:-.022em;font-weight:700;margin:4px 0 2px}
+.status{display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:.8125rem;letter-spacing:-.005em;min-height:20px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:4px;background:var(--ink3);flex:none}
+h2{font-size:1.375rem;line-height:1.2;letter-spacing:-.018em;font-weight:700;margin:28px 0 10px}
+.sub{color:var(--ink2);font-size:.8125rem}
+
+/* Carrousel des meilleurs scores */
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 16px 8px;margin:0 -16px;scrollbar-width:none;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.tile{flex:0 0 min(78%,260px);scroll-snap-align:start;background:var(--card);border-radius:18px;padding:14px 16px;cursor:pointer;border:0;text-align:left;color:inherit;font:inherit}
+.tile .k{display:flex;justify-content:space-between;align-items:center;color:var(--ink2);font-size:.8125rem}
+.tile .n{font-weight:600;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .p{font-size:1.75rem;font-weight:600;letter-spacing:-.02em;line-height:1.15;margin-top:2px}
+.tile .m{color:var(--ink2);font-size:.8125rem;margin-top:4px}
+.cap{display:inline-flex;align-items:center;gap:5px;font-size:.8125rem;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--fill);color:var(--ink)}
+.cap .dot{width:7px;height:7px}
+
+/* Recherche et filtres */
+.search{display:flex;align-items:center;gap:6px;background:var(--fill);border-radius:10px;padding:0 10px;height:38px;margin:4px 0 10px}
+.search svg{width:16px;height:16px;color:var(--ink2);flex:none}
+.search input{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.0625rem;height:100%;outline:none}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:0 0 8px;position:relative}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.8125rem;font-weight:500;height:30px;border-radius:7px;cursor:pointer;position:relative;z-index:1}
+.seg button[aria-pressed=true]{font-weight:600}
+.seg .thumb{position:absolute;top:2px;bottom:2px;left:2px;border-radius:7px;background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04);z-index:0}
+@media (prefers-color-scheme:dark){.seg .thumb{background:#636366}}
+.row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+select,.field{font:inherit;font-size:.9375rem;color:var(--tint);background:var(--fill);border:0;border-radius:9px;height:34px;padding:0 10px;-webkit-appearance:none;appearance:none}
+.toggle{display:flex;align-items:center;gap:8px;font-size:.9375rem;color:var(--ink);margin-left:auto;cursor:pointer}
+.toggle input{width:44px;height:26px;-webkit-appearance:none;appearance:none;background:var(--fill);border-radius:13px;position:relative;cursor:pointer;transition:background .2s;margin:0}
+.toggle input::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:11px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .25s cubic-bezier(.3,1.2,.5,1)}
+.toggle input:checked{background:var(--go)}
+.toggle input:checked::after{transform:translateX(18px)}
+
+/* Liste groupée */
+.list{list-style:none;margin:8px 0 0;padding:0;background:var(--card);border-radius:14px;overflow:hidden}
+.li{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;position:relative}
+.li+.li::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.li:active{background:var(--fill)}
+.li .l{flex:1}
+.li .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.li .meta{color:var(--ink2);font-size:.8125rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .r{text-align:right;flex:none}
+.li .px{font-weight:500}
+.chg{display:inline-block;min-width:74px;margin-top:3px;padding:2px 6px;border-radius:6px;font-size:.8125rem;font-weight:600;color:#fff;text-align:right}
+.up{background:var(--go)}.dn{background:var(--no)}.flat{background:var(--ink3)}
+.empty{padding:24px 16px;color:var(--ink2);text-align:center}
+.foot{color:var(--ink2);font-size:.8125rem;line-height:1.5;margin-top:28px}
+.foot p{margin:0 0 10px}
+
+/* Feuilles (fiche titre, réglages) */
+.scrim{position:fixed;inset:0;background:var(--scrim);opacity:0;pointer-events:none;z-index:20}
+.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:760px;max-height:calc(100dvh - env(safe-area-inset-top) - 24px);z-index:21;
+  background:var(--glass);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  border-radius:14px 14px 0 0;box-shadow:var(--shadow);transform:translateY(110%);visibility:hidden;display:flex;flex-direction:column;
+  border-top:.5px solid rgba(255,255,255,.25)}
+.grab{padding:8px 16px 4px;touch-action:none;cursor:grab;flex:none}
+.grab::before{content:"";display:block;width:36px;height:5px;border-radius:3px;background:var(--ink3);margin:0 auto 8px}
+.sheet .body{overflow-y:auto;overscroll-behavior:contain;padding:0 16px calc(env(safe-area-inset-bottom) + 24px)}
+.shead{display:flex;align-items:flex-start;gap:8px}
+.shead .t{flex:1}
+.shead .k{color:var(--ink2);font-size:.8125rem}
+.shead h3{font-size:1.5rem;line-height:1.15;letter-spacing:-.02em;margin:2px 0 0}
+.done{border:0;background:var(--fill);color:var(--ink2);width:30px;height:30px;border-radius:15px;font-size:1rem;cursor:pointer;flex:none;display:grid;place-items:center}
+.big{font-size:2.125rem;font-weight:600;letter-spacing:-.022em;line-height:1.1;margin:10px 0 2px}
+.group{background:var(--card);border-radius:12px;margin:14px 0 0;overflow:hidden}
+.group .h{font-size:.8125rem;color:var(--ink2);text-transform:none;padding:0 16px;margin:20px 0 6px}
+.cell{display:flex;justify-content:space-between;gap:12px;padding:11px 16px;position:relative;font-size:.9375rem}
+.cell+.cell::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.cell .v{font-variant-numeric:tabular-nums;color:var(--ink2);text-align:right}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.tier{background:var(--card);border-radius:12px;padding:10px 12px}
+.tier .k{font-size:.75rem;color:var(--ink2);letter-spacing:.01em}
+.tier .v{font-size:1.125rem;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.tier .s{font-size:.75rem;color:var(--ink2);margin-top:2px}
+.prose{background:var(--card);border-radius:12px;padding:12px 16px;margin-top:8px;font-size:.9375rem;line-height:1.45}
+.prose ul{margin:0;padding-left:18px}
+.note{color:var(--ink2);font-size:.8125rem;margin:8px 4px 0}
+.lab{display:block;font-size:.8125rem;color:var(--ink2);margin:16px 4px 6px}
+.in{width:100%;height:44px;border:0;border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:1.0625rem;padding:0 14px}
+.in:focus{outline:2px solid var(--tint);outline-offset:-2px}
+.ib:focus-visible,.tile:focus-visible,.li:focus-visible,.seg button:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+
+@media (prefers-reduced-transparency:reduce){.bar,.sheet{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-contrast:more){.list,.tile,.group,.tier,.prose{outline:1px solid var(--ink3)}}
+@media (prefers-reduced-motion:reduce){.press:active{transform:none}.bar .mini{transition:opacity .2s}.ib.spin svg{animation:none}.toggle input::after{transition:none}}
+@media (min-width:700px){.tile{flex-basis:240px}}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Watchlist EV+</h1>
-    <div class="sub">93 lignes (actions, ETF, crypto) · prix convertis en € · paliers calculés en direct · pas un conseil en investissement</div>
-  </div>
-  <div class="ctrl">
-    <label>Cash disponible (€)<input id="cash" type="number" inputmode="decimal" min="0" step="50" placeholder="ex. 2000" style="width:140px"></label>
-    <label>Budget par ligne (%)<input id="lineP" type="number" min="1" max="100" step="1" value="10" style="width:100px"></label>
-    <label>Clé Finnhub (optionnel)<input id="fhk" type="text" placeholder="US temps réel + PER" style="width:160px"></label>
-    <label>Proxy perso (Worker)<input id="pxy" type="url" placeholder="https://xxx.workers.dev" style="width:200px"></label>
-    <label>Clé CoinGecko (optionnel)<input id="cgk" type="text" placeholder="crypto (recommandé)" style="width:140px"></label>
-    <button id="refresh" class="pri">Rafraîchir</button>
-    <a id="addBtn" href="https://github.com/ReagZZZz/watchlist-ev/issues/new?template=ajouter-titre.yml" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink);text-decoration:none;font-weight:600">＋ Ajouter un titre</a>
-  </div>
+<header class="bar" id="bar">
+  <div class="mini">Watchlist</div>
+  <button class="ib press" id="refresh" aria-label="Rafraîchir les cours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+  <button class="ib press" id="openPrefs" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+  <a class="ib press" id="addBtn" aria-label="Ajouter un titre" href="https://github.com/ReagZZZz/watchlist-ev/issues/new?template=ajouter-titre.yml" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
 </header>
 
-<div class="band state" id="state"><span class="dot" id="dot"></span><span id="stateTxt">Initialisation…</span><span id="wsTxt"></span></div>
+<main class="wrap">
+  <h1 id="title">Watchlist</h1>
+  <div class="status"><span class="dot" id="dot"></span><span id="stateTxt">Chargement…</span><span id="wsTxt"></span></div>
 
-<section class="band">
-  <h2>Top 10 EV+ du moment</h2>
-  <div class="top" id="top"></div>
-  <p class="note">Score EV+ (0-100) = 40 % impact portefeuille + 25 % décote vs plus-haut 52 sem. + 20 % RSI + 15 % proximité du palier 1. Clique sur une carte pour la fiche.</p>
-</section>
+  <h2>Les 10 meilleurs scores</h2>
+  <div class="rail" id="top"></div>
 
-<section class="band">
-  <div class="flt">
-    <select id="fEnv" aria-label="Enveloppe"><option value="">Toutes enveloppes</option><option>PEA</option><option>CTO</option><option value="AV">Assurance-vie</option><option>Crypto</option></select>
+  <h2>Toutes les lignes</h2>
+  <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="fQ" type="search" placeholder="Rechercher" aria-label="Rechercher un titre" autocomplete="off"></label>
+  <div class="seg" id="segEnv" role="group" aria-label="Enveloppe"><span class="thumb"></span><button data-v="" aria-pressed="true">Tout</button><button data-v="PEA">PEA</button><button data-v="CTO">CTO</button><button data-v="Crypto">Crypto</button><button data-v="AV">AV</button></div>
+  <div class="seg" id="segSt" role="group" aria-label="Statut"><span class="thumb"></span><button data-v="" aria-pressed="true">Tous</button><button data-v="go">Achat</button><button data-v="near">Proche</button><button data-v="no">Trop cher</button></div>
+  <div class="row2">
     <select id="fSec" aria-label="Secteur"></select>
-    <select id="fSt" aria-label="Statut"><option value="">Tous statuts</option><option value="go">🟢 Prix d'entrée atteint</option><option value="near">🟡 Proche &lt; 5 %</option><option value="no">🔴 Trop cher</option><option value="na">⚪ Sans données</option></select>
-    <input id="fQ" type="search" placeholder="Rechercher nom ou ticker" aria-label="Recherche">
-    <label style="flex-direction:row;align-items:center;gap:6px"><input id="fDup" type="checkbox" style="min-height:20px;width:20px"> Masquer les doublons</label>
+    <select id="sort" aria-label="Trier par"><option value="ev">Score EV+</option><option value="d1">Distance à P1</option><option value="chg">Variation du jour</option><option value="n">Nom</option></select>
+    <label class="toggle">Sans doublons<input id="fDup" type="checkbox"></label>
+  </div>
+  <ul class="list" id="tb"></ul>
+
+  <div class="foot">
+    <p>Les paliers d'achat. P1 (30 % de la ligne) : la moyenne mobile 50 jours si le cours est au-dessus, sinon la 200 jours, sinon le cours moins un ATR. P2 (40 %) : 82,5 % de ta valeur intrinsèque si tu l'as saisie dans la fiche, sinon un repère technique sous P1. P3 (30 %) : le plus-bas sur un an, ou 10 % sous P2 s'il est plus bas. Une ligne passe en zone d'achat quand le cours touche P1 ou quand son RSI descend sous 30.</p>
+    <p>Le score EV+ sur 100 additionne l'impact sur ton patrimoine (40 %), le recul depuis le plus-haut sur un an (25 %), le RSI (20 %) et la proximité de P1 (15 %).</p>
+    <p>Cours : robot GitHub (Yahoo Finance) toutes les 2 heures en semaine, crypto via CoinGecko. Thèses et risques rédigés par Claude, à vérifier. Ce n'est pas un conseil en investissement.</p>
+  </div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du titre"><div class="grab" data-grab></div><div class="body" id="sheetIn"></div></section>
+<section class="sheet" id="prefs" role="dialog" aria-modal="true" aria-label="Réglages"><div class="grab" data-grab><div class="shead"><div class="t"><h3>Réglages</h3></div><button class="done press" data-close aria-label="Fermer">✕</button></div></div>
+  <div class="body">
+    <label class="lab" for="cash">Cash disponible pour la watchlist (€)</label><input class="in num" id="cash" type="number" inputmode="decimal" min="0" step="50">
+    <label class="lab" for="lineP">Part du cash par ligne (%)</label><input class="in num" id="lineP" type="number" inputmode="numeric" min="1" max="100" step="1">
+    <p class="note">Chaque ligne reçoit cette part, répartie 30/40/30 sur P1, P2 et P3. Actions entières au PEA, fractions au CTO et en crypto.</p>
+    <label class="lab" for="pxy">Proxy perso (Cloudflare Worker, facultatif)</label><input class="in" id="pxy" type="url" placeholder="https://…workers.dev" autocomplete="off">
+    <label class="lab" for="cgk">Clé CoinGecko (facultative)</label><input class="in" id="cgk" type="text" autocomplete="off">
+    <label class="lab" for="fhk">Clé Finnhub (facultative : cours US en direct, PER)</label><input class="in" id="fhk" type="text" autocomplete="off">
+    <p class="note">Ces réglages restent dans ce navigateur.</p>
   </div>
 </section>
-
-<section class="band scroll">
-  <table>
-    <thead><tr>
-      <th data-k="n">Nom</th><th data-k="t" class="hide-s">Ticker</th><th data-k="pe" class="r">Prix €</th><th data-k="chg" class="r">Var. j</th>
-      <th data-k="d1" class="r">Dist. P1</th><th data-k="rsi" class="r hide-s">RSI</th><th data-k="env">Env.</th><th data-k="ev" class="r">EV+</th><th data-k="st">Statut</th><th>Doublon</th>
-    </tr></thead>
-    <tbody id="tb"></tbody>
-  </table>
-</section>
-
-<section class="band note">
-  <p><b>Méthode des paliers.</b> P1 tactique (30 %) : MM50 si le cours est au-dessus, sinon MM200, sinon cours − 1 ATR. P2 cœur (40 %) : 82,5 % de ta valeur intrinsèque si tu l'as saisie dans la fiche (marge de sécurité de 17,5 %), sinon proxy technique min(P1, MM200) − 1,5 ATR. P3 capitulation (30 %) : min(plus-bas 52 sem., P2 × 0,90). Alerte 🟢 si cours ≤ P1 ou RSI(14) &lt; 30.</p>
-  <p><b>Données.</b> Actions et crypto : Yahoo Finance (graphique 1 an, quotidien) via ton proxy perso s'il est renseigné, puis corsproxy.io, corsfix, allorigins, codetabs, et en option le flux temps réel Finnhub (websocket, 50 titres US max). Crypto : CoinGecko en source principale (appel direct en euros, sans proxy ; historique recalculé une fois par jour), secours Binance ; prix crypto rafraîchis en continu par le websocket Binance. Instantané crypto du 24/11 20h30 : RSI approximatif (série CoinGecko à pas de ~3 jours) ; repli sur le dernier relevé réussi gardé dans ton navigateur, puis sur un instantané figé (date indiquée). PER et rendement : uniquement avec une clé Finnhub gratuite, surtout pour les titres US. Scores d'impact, thèses et risques : grille qualitative rédigée par Claude le 24/11/2026, à challenger.</p>
-</section>
-
-<div id="sheet" role="dialog" aria-modal="true"><div class="in" id="sheetIn"></div></div>
 
 <script>
 {
@@ -352,7 +413,7 @@ function calc(C,H,L,p0,c,div){
 
 function compute(x){
   const L=LIVE[x.t],S=SNAP[x.t];let q=null,from='';
-  if(L){q=L;from=L.robot?'robot GitHub '+new Date(L.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):Date.now()-L.ts<15*60e3?'live':'cache '+new Date(L.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+  if(L){q=L;from=L.robot?'robot du '+new Date(L.ts).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):Date.now()-L.ts<15*60e3?'en direct':'gardé sur cet appareil, '+new Date(L.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
   else if(S){q=Object.assign({c:'EUR'},S);from='instantané '+S.d}
   const o={...x,from};
   if(!q){o.st='na';o.ev=null;return o}
@@ -378,53 +439,126 @@ function compute(x){
   return o;
 }
 
-const ST={go:['🟢 Fenêtre de tir','b-go'],near:['🟡 Proche < 5 %','b-near'],no:['🔴 Trop cher','b-no'],na:['⚪ Sans données','b-na']};
+const ST={go:["Zone d'achat",'var(--go)'],near:['Proche','var(--near)'],no:['Trop cher','var(--no)'],na:['Pas de cours','var(--ink3)']};
 const envLbl=e=>e==='PEA*'?'PEA*':e;
+const F={env:'',st:''};
+const SORTS={ev:['ev',-1],d1:['d1',1],chg:['chg',-1],n:['n',1]};
 function size(o){
   const cash=+$('cash').value||0,lp=(+$('lineP').value||10)/100;if(!cash||!o.pe)return null;
   const B=cash*lp,frac=o.e==='CTO'||o.e==='Crypto',m=o.e==='Crypto'?1e5:100;
   return [[o.p1,0.3],[o.p2,0.4],[o.p3,0.3]].map(([p,w])=>{const a=B*w;const n=frac?Math.floor(a/p*m)/m:Math.floor(a/p);return {a,n,cost:n*p}});
 }
+const qty=(o,n)=>fmt(n,o.e==='Crypto'?5:o.e==='CTO'?2:0);
+const capHTML=st=>`<span class="cap"><span class="dot" style="background:${ST[st][1]}"></span>${ST[st][0]}</span>`;
+const chgHTML=c=>`<span class="chg num ${c>0?'up':c<0?'dn':'flat'}">${pct(c)}</span>`;
 
 function render(){
   const rows=D.map(compute);
-  const fE=$('fEnv').value,fS=$('fSec').value,fT=$('fSt').value,fQ=$('fQ').value.trim().toLowerCase(),fD=$('fDup').checked;
-  const vis=rows.filter(o=>(!fE||o.e.startsWith(fE))&&(!fS||o.s===fS)&&(!fT||o.st===fT)&&(!fQ||(o.n+' '+o.t).toLowerCase().includes(fQ))&&(!fD||!o.o));
-  vis.sort((a,b)=>{const A=a[sortK],B=b[sortK];if(A==null)return 1;if(B==null)return -1;return (A>B?1:A<B?-1:0)*sortDir});
-  $('tb').innerHTML=vis.map(o=>`<tr class="row" data-t="${esc(o.t)}"><td><b>${esc(o.n)}</b></td><td class="hide-s num">${esc(o.t)}</td><td class="r">${fmt(o.pe)}${o.approx&&o.pe?'<span class="note">*</span>':''}</td><td class="r ${o.chg>0?'pos':o.chg<0?'neg':''}">${pct(o.chg)}</td><td class="r">${pct(o.d1)}</td><td class="r hide-s">${fmt(o.rsi,0)}</td><td>${esc(envLbl(o.e))}</td><td class="r"><b>${o.ev??'—'}</b></td><td><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span></td><td>${o.o?`<span class="badge b-dup" title="${esc(o.o)}">⚠ ${esc(o.o.split(' ')[0]+' '+(o.o.split(' ')[1]||''))}</span>`:''}</td></tr>`).join('')||'<tr><td colspan="10" class="note">Aucune ligne pour ces filtres.</td></tr>';
+  const fS=$('fSec').value,fQ=$('fQ').value.trim().toLowerCase(),fD=$('fDup').checked,[sk,sd]=SORTS[$('sort').value]||SORTS.ev;
+  const vis=rows.filter(o=>(!F.env||o.e.startsWith(F.env))&&(!fS||o.s===fS)&&(!F.st||o.st===F.st)&&(!fQ||(o.n+' '+o.t).toLowerCase().includes(fQ))&&(!fD||!o.o));
+  vis.sort((a,b)=>{const A=a[sk],B=b[sk];if(A==null)return 1;if(B==null)return -1;return (A>B?1:A<B?-1:0)*sd});
+  $('tb').innerHTML=vis.map(o=>`<li class="li" tabindex="0" data-t="${esc(o.t)}"><span class="dot" style="background:${ST[o.st][1]}" title="${esc(ST[o.st][0])}"></span>
+    <div class="l"><div class="nm">${esc(o.n)}</div><div class="meta">${esc(envLbl(o.e))} · ${o.pe?'P1 '+pct(o.d1):'pas de cours'}${o.ev!=null?' · EV+ '+o.ev:''}${o.o?' · doublon':''}</div></div>
+    <div class="r"><div class="px num">${o.pe?fmt(o.pe)+' €':'—'}</div>${o.pe?chgHTML(o.chg):''}</div></li>`).join('')
+    ||'<li class="empty">Aucun titre ne correspond à ces filtres.</li>';
   const top=rows.filter(o=>o.ev!=null&&o.pe).sort((a,b)=>b.ev-a.ev).slice(0,10);
-  $('top').innerHTML=top.map((o,k)=>{const sz=size(o);return `<div class="card" data-t="${esc(o.t)}"><div class="rk">#${k+1} · ${esc(envLbl(o.e))} · ${esc(o.s)}</div><b>${esc(o.n)}</b><div class="big num">${fmt(o.pe)} €</div><div class="note">P1 ${fmt(o.p1)} € (${pct(o.d1)}) · EV+ <b>${o.ev}</b></div><div style="margin-top:6px"><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span></div>${sz?`<div class="note" style="margin-top:6px">${sz.every(z=>!z.n)?'Budget de ligne trop faible pour 1 action entière':sz.map((z,j)=>'P'+(j+1)+' : '+fmt(z.n,o.e==='Crypto'?5:o.e==='CTO'?2:0)).join(' · ')+' titres'}</div>`:''}</div>`}).join('')||'<p class="note">Pas encore de cours. Lance « Rafraîchir ».</p>';
+  $('top').innerHTML=top.map((o,k)=>{const sz=size(o);const sline=sz?(sz.every(z=>!z.n)?'200 € ne suffisent pas pour une action':'P1 '+qty(o,sz[0].n)+' · P2 '+qty(o,sz[1].n)+' · P3 '+qty(o,sz[2].n)+' titres'):'';
+    return `<button class="tile press" data-t="${esc(o.t)}"><div class="k"><span>${k+1}. ${esc(envLbl(o.e))} · ${esc(o.s)}</span><span class="cap num">EV+ ${o.ev}</span></div>
+    <div class="n">${esc(o.n)}</div><div class="p num">${fmt(o.pe)} €</div>
+    <div class="m num">P1 à ${fmt(o.p1)} € (${pct(o.d1)})</div><div class="m">${capHTML(o.st)}</div>${sline?`<div class="m num">${sline.replace('200 €',fmt(+$('cash').value*(+$('lineP').value||10)/100,0)+' €')}</div>`:''}</button>`}).join('')
+    ||'<p class="sub">Pas encore de cours.</p>';
 }
 
-function sheet(t){
-  const o=compute(D.find(x=>x.t===t));const sz=size(o);const cto=o.e==='CTO';
-  $('sheetIn').innerHTML=`<button id="close" style="float:right">Fermer</button>
-  <div class="rk">${esc(o.t)} · ${esc(o.s)} · ${esc(envLbl(o.e))}</div><h2 style="font-size:28px;margin:4px 0">${esc(o.n)}</h2>
-  <div class="big num" style="font-size:26px">${fmt(o.pe)} € <span class="${o.chg>0?'pos':'neg'}" style="font-size:16px">${pct(o.chg)}</span></div>
-  <div class="note">Source : ${esc(o.from||'aucune')}${o.approx?' — indicateurs partiels, paliers approximatifs':''}</div>
-  <p><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span> ${o.ev!=null?'Score EV+ <b>'+o.ev+'</b> · Impact portefeuille <b>'+o.i+'/10</b>':''}</p>
-  ${o.o?`<p><span class="badge b-dup">⚠ ${esc(o.o)}</span></p>`:''}
-  <div class="grid3">${[['P1 tactique',o.p1,'30 %'],['P2 cœur EV+',o.p2,'40 %'],['P3 capitulation',o.p3,'30 %']].map(([l,v,w],j)=>`<div class="tier"><div class="rk">${l} · ${w}</div><div class="big num">${fmt(v)} €</div>${sz?`<div class="note">${fmt(sz[j].n,o.e==='Crypto'?5:cto?2:0)} titres ≈ ${fmt(sz[j].cost,0)} €</div>`:''}</div>`).join('')}</div>
-  ${sz?'':'<p class="note">Saisis ton cash disponible en haut pour le nombre de titres par palier.</p>'}
-  <div class="kv"><div><span>MM50</span>${fmt(o.ma50)}</div><div><span>MM200</span>${fmt(o.ma200)}</div><div><span>RSI 14</span>${fmt(o.rsi,0)}</div><div><span>ATR 14</span>${fmt(o.atr)}</div><div><span>Plus-haut 52 s.</span>${fmt(o.hi52)} (${pct(o.hi52?(o.pe/o.hi52-1)*100:null)})</div><div><span>Plus-bas 52 s.</span>${fmt(o.lo52)}</div><div><span>PER (Finnhub)</span>${fmt(o.per,1)}</div><div><span>Rendement</span>${o.dy!=null?fmt(o.dy,2)+' %':'—'}</div></div>
-  <h2 style="margin-top:16px">Thèse micro</h2><p>${esc(o.th)}</p>
-  <h2>Vents contraires macro</h2><p>${esc(o.mh)}</p>
-  <h2>3 risques clés</h2><ul>${o.r.map(r=>'<li>'+esc(r)+'</li>').join('')}</ul>
-  <p><b>Seuil d'invalidation :</b> ${esc(o.inv)}</p>
-  ${cto?'<p class="note">CTO : plus-values et dividendes soumis à la flat tax de 30 % et au risque de change.</p>':''}
-  ${o.e==='Crypto'?'<p class="note">Crypto : plus-values imposées à 30 % à la cession vers l\'euro. Rappel de ta règle : plafond de 5 % du patrimoine.</p>':''}
-  ${o.e==='PEA*'?'<p class="note">PEA* : titre de l\'EEE éligible au PEA, à condition que ton courtier PEA donne accès à cette place de cotation.</p>':''}
-  <label style="margin-top:10px">Ma valeur intrinsèque (€) — remplace le P2 technique par 82,5 % de cette valeur<input id="fvIn" type="number" step="0.01" value="${o.fv??''}"></label>`;
-  $('sheet').classList.add('on');
-  $('close').onclick=()=>$('sheet').classList.remove('on');
-  $('fvIn').onchange=e=>{const v=+e.target.value;if(v>0)FV[t]=v;else delete FV[t];store.set('ev_fv',FV);sheet(t);render()};
+function sheetHTML(o){
+  const sz=size(o),cto=o.e==='CTO';
+  const hi=o.hi52?(o.pe/o.hi52-1)*100:null;
+  const cells=[['Moyenne mobile 50 j',fmt(o.ma50)+' €'],['Moyenne mobile 200 j',fmt(o.ma200)+' €'],['RSI 14 jours',fmt(o.rsi,0)],['ATR 14 jours',fmt(o.atr)+' €'],
+    ['Plus-haut sur un an',fmt(o.hi52)+' € ('+pct(hi)+')'],['Plus-bas sur un an',fmt(o.lo52)+' €']];
+  if(o.per!=null)cells.push(['PER',fmt(o.per,1)]);if(o.dy!=null)cells.push(['Rendement',fmt(o.dy,2)+' %']);
+  const notes=[];
+  if(cto)notes.push('Au CTO, plus-values et dividendes paient la flat tax de 30 %, et le cours en euros bouge avec le change.');
+  if(o.e==='Crypto')notes.push("Crypto : plus-values imposées à 30 % quand tu revends en euros. Ta règle : 5 % du patrimoine au maximum.");
+  if(o.e==='PEA*')notes.push('PEA* : éligible au PEA si ton courtier donne accès à cette place de cotation.');
+  return `<div class="shead"><div class="t"><div class="k">${esc(o.t)} · ${esc(o.s)} · ${esc(envLbl(o.e))}</div><h3>${esc(o.n)}</h3></div><button class="done press" data-close aria-label="Fermer">✕</button></div>
+  <div class="big num">${o.pe?fmt(o.pe)+' €':'—'}</div>
+  <div class="status">${o.pe?chgHTML(o.chg):''} ${capHTML(o.st)}${o.ev!=null?`<span class="cap num">EV+ ${o.ev}</span><span class="cap num">Impact ${o.i}/10</span>`:''}</div>
+  ${o.o?`<p class="note">Doublon : ${esc(o.o)}</p>`:''}
+  <div class="tiers">${[['P1 · 30 %',o.p1],['P2 · 40 %',o.p2],['P3 · 30 %',o.p3]].map(([l,v],j)=>`<div class="tier"><div class="k">${l}</div><div class="v num">${fmt(v)} €</div>${sz&&sz.some(z=>z.n)?`<div class="s num">${qty(o,sz[j].n)} titre${sz[j].n>1?'s':''} · ${fmt(sz[j].cost,0)} €</div>`:''}</div>`).join('')}</div>
+  ${!sz?'<p class="note">Indique ton cash dans les réglages pour voir le nombre de titres par palier.</p>':sz.every(z=>!z.n)?`<p class="note">Avec ${fmt(+$('cash').value*(+$('lineP').value||10)/100,0)} € par ligne, aucun palier ne permet d'acheter une action entière.</p>`:''}
+  <div class="group">${cells.map(([k,v])=>`<div class="cell"><span>${k}</span><span class="v">${v}</span></div>`).join('')}</div>
+  <p class="note">${o.from?'Cours : '+esc(o.from):'Aucun cours disponible.'}${o.approx?'. Indicateurs partiels, paliers approximatifs.':''}</p>
+  <div class="group h" style="background:none">Thèse</div><div class="prose">${esc(o.th)}</div>
+  <div class="group h" style="background:none">Ce qui pourrait freiner</div><div class="prose">${esc(o.mh)}</div>
+  <div class="group h" style="background:none">Risques</div><div class="prose"><ul>${o.r.map(r=>'<li>'+esc(r)+'</li>').join('')}</ul></div>
+  <div class="group h" style="background:none">La thèse tombe si</div><div class="prose">${esc(o.inv)}</div>
+  ${notes.map(n=>`<p class="note">${n}</p>`).join('')}
+  <label class="lab" for="fvIn">Ta valeur intrinsèque (€)</label><input class="in num" id="fvIn" type="number" inputmode="decimal" step="0.01" value="${o.fv??''}" placeholder="Vide : P2 technique">
+  <p class="note">Si tu la renseignes, P2 devient 82,5 % de cette valeur.</p>`;
 }
+
+/* Ressort amorti (réponse/amortissement façon Apple), interruptible, qui part de la position affichée */
+function spring(state,to,{response=0.3,damping=1,velocity=0},onFrame,onDone){
+  cancelAnimationFrame(state.raf);
+  const k=(2*Math.PI/response)**2,c=4*Math.PI*damping/response;let x=state.y,v=velocity,last=performance.now();
+  const step=now=>{const dt=Math.min(.032,(now-last)/1000);last=now;
+    const a=-k*(x-to)-c*v;v+=a*dt;x+=v*dt;state.y=x;state.v=v;onFrame(x);
+    if(Math.abs(x-to)<.5&&Math.abs(v)<5){state.y=to;state.v=0;onFrame(to);onDone&&onDone();return}
+    state.raf=requestAnimationFrame(step)};
+  state.raf=requestAnimationFrame(step);
+}
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const project=(v,d=0.998)=>(v/1000)*d/(1-d);
+const rubber=(o,dim,c=0.55)=>(o*dim*c)/(dim+c*Math.abs(o));
+let openSheet=null;
+function sheetCtl(el){
+  if(el._ctl)return el._ctl;
+  const scrim=$('scrim'),st={y:0,v:0,raf:0};
+  const H=()=>el.getBoundingClientRect().height||600;
+  const paint=y=>{el.style.transform=`translateY(${Math.max(y,0)>0?y:y}px)`;const p=Math.max(0,Math.min(1,1-y/H()));scrim.style.opacity=p;};
+  const ctl={
+    open(){openSheet=ctl;el.style.visibility='visible';scrim.style.pointerEvents='auto';document.body.style.overflow='hidden';
+      if(reduced.matches){st.y=0;el.style.transition='opacity .2s';el.style.opacity=1;paint(0);return}
+      if(!st.raf&&el.style.transform==='')st.y=H();
+      spring(st,0,{response:0.35,damping:1},paint)},
+    close(v=0){if(openSheet===ctl)openSheet=null;scrim.style.pointerEvents='none';document.body.style.overflow='';
+      const end=()=>{el.style.visibility='hidden'};
+      if(reduced.matches){el.style.opacity=0;scrim.style.opacity=0;setTimeout(end,200);return}
+      spring(st,H()+40,{response:0.3,damping:v>0?0.8:1,velocity:v},paint,end)}
+  };
+  // Glisser pour fermer : suit le doigt 1:1, résiste vers le haut, projette l'élan au relâché
+  let drag=null;
+  const startDrag=(e,fromBody)=>{cancelAnimationFrame(st.raf);st.raf=0;drag={id:e.pointerId,y0:e.clientY,base:st.y,hist:[[e.clientY,e.timeStamp]],fromBody,moved:false};};
+  el.querySelector('[data-grab]').addEventListener('pointerdown',e=>{if(e.target.closest('[data-close]'))return;e.currentTarget.setPointerCapture(e.pointerId);startDrag(e,false)});
+  const body=el.querySelector('.body');
+  body.addEventListener('pointerdown',e=>{if(body.scrollTop<=0&&e.pointerType!=='mouse')startDrag(e,true)});
+  el.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dy=e.clientY-drag.y0;
+    if(drag.fromBody&&!drag.moved){if(dy<10)return;drag.moved=true;drag.y0+=10;try{el.setPointerCapture(e.pointerId)}catch(x){}}
+    drag.moved=true;let y=drag.base+(e.clientY-drag.y0);if(y<0)y=-rubber(-y,H());st.y=y;paint(y);
+    drag.hist.push([e.clientY,e.timeStamp]);if(drag.hist.length>5)drag.hist.shift()});
+  const end=e=>{if(!drag||e.pointerId!==drag.id)return;const h=drag.hist,a=h[0],b=h[h.length-1];
+    const v=b[1]>a[1]?(b[0]-a[0])/((b[1]-a[1])/1000):0;const wasMoved=drag.moved;drag=null;if(!wasMoved)return;
+    const land=st.y+project(v);if(land>H()*0.45)ctl.close(Math.max(v,0));else spring(st,0,{response:0.3,damping:v<0?0.8:1,velocity:v},paint)};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('click',e=>{if(e.target.closest('[data-close]'))ctl.close()});
+  el._ctl=ctl;return ctl;
+}
+function sheet(t){
+  const x=D.find(z=>z.t===t);if(!x)return;const o=compute(x);
+  $('sheetIn').innerHTML=sheetHTML(o);$('sheetIn').scrollTop=0;
+  $('sheetIn').querySelector('[data-close]').onclick=()=>sheetCtl($('sheet')).close();
+  $('fvIn').onchange=e=>{const v=+e.target.value;if(v>0)FV[t]=v;else delete FV[t];store.set('ev_fv',FV);
+    const keep=$('sheetIn').scrollTop;$('sheetIn').innerHTML=sheetHTML(compute(x));$('sheetIn').scrollTop=keep;sheet.rebind(t,x);render()};
+  sheetCtl($('sheet')).open();
+}
+sheet.rebind=(t,x)=>{$('sheetIn').querySelector('[data-close]').onclick=()=>sheetCtl($('sheet')).close();
+  $('fvIn').onchange=e=>{const v=+e.target.value;if(v>0)FV[t]=v;else delete FV[t];store.set('ev_fv',FV);const keep=$('sheetIn').scrollTop;$('sheetIn').innerHTML=sheetHTML(compute(x));$('sheetIn').scrollTop=keep;sheet.rebind(t,x);render()}};
 
 function setState(c,txt){$('dot').style.background=c;$('stateTxt').textContent=txt}
 
+
 let rq=0;const later=()=>{if(!rq)rq=setTimeout(()=>{rq=0;render()},1500)};
 let wsC=null,wsF=null;const wsState={c:false,f:false};
-const wsLbl=()=>{$('wsTxt').textContent=(wsState.c?' · ⚡ Crypto temps réel (Binance)':'')+(wsState.f?' · ⚡ US temps réel (Finnhub)':'')};
+const wsLbl=()=>{$('wsTxt').textContent=(wsState.c?' · crypto en direct':'')+(wsState.f?' · US en direct':'')};
 async function loadCrypto(){
   let ok=0;const key=$('cgk').value.trim();
   await Promise.all(Object.entries(CR).map(async([t,[b,g]])=>{if(LIVE[t]&&Date.now()-LIVE[t].ts<15*60e3){LIVE[t].bn=b+'EUR';return}let r=null;
@@ -478,17 +612,17 @@ async function loadRobot(){
 async function refresh(){
   const rb=await loadRobot();
   if(rb&&rb.n&&Date.now()-rb.ts<4*3600e3){store.set('ev_live',LIVE);render();
-    setState('var(--go)',`Robot GitHub · ${rb.n} cours au ${new Date(rb.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}`);
+    setState('var(--go)',`Cours du ${new Date(rb.ts).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${rb.n} lignes`);
     loadCryptoCG().then(n=>{if(n){render();cryptoWS()}});return}
   const list=D.filter(x=>x.e!=='Crypto'&&!['SPACEX','ANTHROPIC'].includes(x.t)).map(x=>x.t);
   const cryptoBackup=()=>loadCrypto().then(n=>{if(n){store.set('ev_live',LIVE);cryptoWS();render()}});
   loadCryptoCG().then(n=>{if(n){store.set('ev_live',LIVE);render();cryptoWS()}if(n<Object.keys(CR).length)cryptoBackup()});
   const fk=$('fhk').value.trim();if(fk&&!wsState.f)finnhubWS(fk);
-  setState('var(--near)','Connexion à Yahoo Finance…');
+  setState('var(--near)','Mise à jour des cours…');
   let ok=0,fail=0;
   try{await getJSON(chartURL('EURUSD=X','5d'))}catch(e){
     src=Object.keys(LIVE).length?'cache':'snap';
-    setState('var(--no)',src==='cache'?'Flux bloqué (CORS/proxys) : derniers cours mémorisés dans ce navigateur.':'Flux bloqué : instantané complet du 24/11/2026 ~20h30 (Yahoo + CoinGecko). Ouvre le fichier .html dans un navigateur pour le live.');
+    setState('var(--no)',src==='cache'?'Le flux ne répond pas : derniers cours gardés sur cet appareil.':'Le flux ne répond pas : cours du 24 novembre vers 20h30.');
     render();return}
   const ccys=['USD','CHF','DKK','NOK','SEK','JPY','KRW','HKD','GBP'];
   await Promise.all(ccys.map(async c=>{try{const j=await getJSON(chartURL('EUR'+c+'=X','5d'));FX[c]=j.chart.result[0].meta.regularMarketPrice}catch(e){}}));
@@ -496,10 +630,10 @@ async function refresh(){
   let k=0;
   const worker=async()=>{while(k<list.length){const t=list[k++];
     try{const j=await getJSON(chartURL(t,'1y'));const r=indic(j.chart.result[0]);if(r){LIVE[t]=r;ok++}else fail++}catch(e){fail++}
-    setState('var(--near)',`Chargement ${ok+fail}/${list.length}…`)}};
+    setState('var(--near)',`Mise à jour ${ok+fail}/${list.length}…`)}};
   await Promise.all(Array.from({length:6},worker));
   store.set('ev_live',LIVE);src='live';
-  setState(fail?'var(--near)':'var(--go)',`Live · ${ok} cours à jour à ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}${fail?' · '+fail+' en échec (cache/instantané)':''}`);
+  setState(fail?'var(--near)':'var(--go)',`Cours en direct à ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} · ${ok} lignes${fail?', '+fail+' sans réponse':''}`);
   render();
   const key=$('fhk').value.trim();if(key)finnhub(key);
 }
@@ -512,29 +646,46 @@ async function finnhub(key){
   store.set('ev_fh',FH);render();
 }
 
-// init
-const secs=[...new Set(D.map(x=>x.s))];
-$('fSec').innerHTML='<option value="">Tous secteurs</option>'+secs.map(s=>`<option>${esc(s)}</option>`).join('');
+// Démarrage
+const fillSec=()=>{const ss=[...new Set(D.map(x=>x.s))].sort((a,b)=>a.localeCompare(b,'fr'));$('fSec').innerHTML='<option value="">Tous les secteurs</option>'+ss.map(s=>`<option>${esc(s)}</option>`).join('')};
+fillSec();
 $('cash').value=store.get('ev_cash','2000');$('lineP').value=store.get('ev_lp',10);$('fhk').value=store.get('ev_fhk','');
-['fEnv','fSec','fSt','fQ','fDup'].forEach(id=>$(id).addEventListener('input',render));
+$('sort').value=store.get('ev_sort','ev');
+['fSec','fQ','fDup'].forEach(id=>$(id).addEventListener('input',render));
+$('sort').addEventListener('input',()=>{store.set('ev_sort',$('sort').value);render()});
 $('cash').addEventListener('input',()=>{store.set('ev_cash',$('cash').value);render()});
 $('lineP').addEventListener('input',()=>{store.set('ev_lp',$('lineP').value);render()});
 $('fhk').addEventListener('change',()=>{store.set('ev_fhk',$('fhk').value.trim());if($('fhk').value.trim())finnhubWS($('fhk').value.trim())});
 $('pxy').value=store.get('ev_pxy','');$('pxy').addEventListener('change',()=>{store.set('ev_pxy',$('pxy').value.trim());goodProxy=0});
 $('cgk').value=store.get('ev_cgk','');$('cgk').addEventListener('change',()=>store.set('ev_cgk',$('cgk').value.trim()));
-$('refresh').addEventListener('click',refresh);
-document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;sortDir=sortK===k?-sortDir:(k==='n'||k==='t'?1:-1);sortK=k;render()}));
-document.addEventListener('click',e=>{const r=e.target.closest('[data-t]');if(r&&!e.target.closest('#sheet'))sheet(r.dataset.t);if(e.target.id==='sheet')$('sheet').classList.remove('on')});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').classList.remove('on')});
+
+// Contrôles segmentés : le curseur glisse vers le bouton choisi
+function seg(id,key){const box=$(id),th=box.querySelector('.thumb'),bs=[...box.querySelectorAll('button')];
+  const place=(b,anim)=>{th.style.transition=anim&&!reduced.matches?'transform .3s cubic-bezier(.3,1,.4,1),width .3s cubic-bezier(.3,1,.4,1)':'none';th.style.width=b.offsetWidth+'px';th.style.transform=`translateX(${b.offsetLeft-2}px)`};
+  bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.setAttribute('aria-pressed',x===b));F[key]=b.dataset.v;place(b,true);render()}));
+  const cur=()=>bs.find(b=>b.getAttribute('aria-pressed')==='true');new ResizeObserver(()=>place(cur(),false)).observe(box);place(cur(),false)}
+seg('segEnv','env');seg('segSt','st');
+
+const spinRefresh=async()=>{const b=$('refresh');b.classList.add('spin');try{await refresh()}finally{b.classList.remove('spin')}};
+$('refresh').addEventListener('click',spinRefresh);
+$('openPrefs').addEventListener('click',()=>sheetCtl($('prefs')).open());
+sheetCtl($('prefs'));sheetCtl($('sheet'));
+$('scrim').addEventListener('click',()=>openSheet&&openSheet.close());
+document.addEventListener('click',e=>{const r=e.target.closest('[data-t]');if(r&&!e.target.closest('.sheet'))sheet(r.dataset.t)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openSheet)openSheet.close();
+  if(e.key==='Enter'&&e.target.matches&&e.target.matches('.li'))sheet(e.target.dataset.t)});
+const io=new IntersectionObserver(([en])=>$('bar').classList.toggle('scrolled',!en.isIntersecting),{rootMargin:'-60px 0px 0px 0px'});io.observe($('title'));
+
 async function loadWL(){
   try{const r=await fetch('watchlist.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)return false;const j=await r.json();if(!Array.isArray(j.rows)||!j.rows.length)return false;
     D=j.rows.map(x=>({t:x.t,n:x.n,s:x.s,e:x.e,i:x.i??null,o:x.o||'',th:x.th||'',mh:x.mh||'',r:Array.isArray(x.r)?x.r:String(x.r||'').split('|'),inv:x.inv||''}));
     for(const x of j.rows)if(x.cg&&!CR[x.t])CR[x.t]=[x.t.split('-')[0],x.cg];
-    const ss=[...new Set(D.map(x=>x.s))];$('fSec').innerHTML='<option value="">Tous secteurs</option>'+ss.map(z=>`<option>${esc(z)}</option>`).join('');
+    const keep=$('fSec').value;fillSec();$('fSec').value=keep;
     return true}catch(e){return false}
 }
-render();loadWL().then(()=>{render();refresh()});
-setInterval(()=>{if(src==='live'&&!document.hidden)refresh()},($('pxy').value.trim()?5:15)*60*1000);
+render();loadWL().then(()=>{render();spinRefresh()});
+setInterval(()=>{if(!document.hidden)refresh()},($('pxy').value.trim()?5:15)*60*1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadRobot().then(r=>{if(r&&r.n)render()})});
 }
 </script>
 </body>
