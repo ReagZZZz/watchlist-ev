@@ -1,0 +1,1502 @@
+{
+ "version": 1,
+ "updated": "2026-11-24",
+ "rows": [
+  {
+   "t": "MC.PA",
+   "n": "LVMH",
+   "s": "Luxe",
+   "e": "PEA",
+   "i": 4,
+   "o": "Déjà détenu",
+   "th": "N°1 mondial du luxe, pricing power, bilan solide, FCF élevé.",
+   "mh": "Luxe aspirationnel en panne (Chine, US), euro fort.",
+   "r": [
+    "Chine durablement faible",
+    "Effet de change USD",
+    "Succession Arnault"
+   ],
+   "inv": "Croissance organique négative 4 trimestres de suite"
+  },
+  {
+   "t": "KER.PA",
+   "n": "Kering",
+   "s": "Luxe",
+   "e": "PEA",
+   "i": 4,
+   "o": "",
+   "th": "Pari de redressement de Gucci, forte décote vs pairs.",
+   "mh": "Bas de cycle du luxe, dette élevée.",
+   "r": [
+    "Échec du relaunch Gucci",
+    "Endettement",
+    "Cessions forcées"
+   ],
+   "inv": "Marge Gucci < 10 % durablement"
+  },
+  {
+   "t": "OR.PA",
+   "n": "L'Oréal",
+   "s": "Luxe",
+   "e": "PEA",
+   "i": 5,
+   "o": "",
+   "th": "Leader mondial de la beauté, ROIC > WACC durable.",
+   "mh": "Chine molle, multiple historiquement élevé.",
+   "r": [
+    "Normalisation post-boom beauté",
+    "Travel retail",
+    "Valorisation"
+   ],
+   "inv": "Croissance organique < 3 % sur 12 mois"
+  },
+  {
+   "t": "EL.PA",
+   "n": "EssilorLuxottica",
+   "s": "Santé",
+   "e": "PEA",
+   "i": 7,
+   "o": "",
+   "th": "Quasi-monopole de l'optique, lunettes connectées Meta, récurrence.",
+   "mh": "Doutes sur les lunettes IA, -40 % sur un an.",
+   "r": [
+    "Concurrence lunettes IA (Apple, Alibaba)",
+    "Multiple encore élevé",
+    "Litiges concurrence"
+   ],
+   "inv": "Perte du partenariat Meta ou marge < 18 %"
+  },
+  {
+   "t": "BN.PA",
+   "n": "Danone",
+   "s": "Agro",
+   "e": "PEA",
+   "i": 2,
+   "o": "Doublon agro (Savencia PEE)",
+   "th": "Défensif, nutrition spécialisée, restructuration réussie.",
+   "mh": "Coûts laitiers, pression de la distribution.",
+   "r": [
+    "Volumes en baisse",
+    "Inflation des intrants",
+    "Change émergents"
+   ],
+   "inv": "Marge < 12 % ou volumes négatifs"
+  },
+  {
+   "t": "RI.PA",
+   "n": "Pernod Ricard",
+   "s": "Conso",
+   "e": "PEA",
+   "i": 4,
+   "o": "",
+   "th": "Spiritueux premium, décote historique après déstockage.",
+   "mh": "Baisse structurelle de l'alcool, tarifs Chine/US.",
+   "r": [
+    "Déclin générationnel",
+    "Taxes cognac Chine",
+    "Dette"
+   ],
+   "inv": "Ventes organiques négatives en 2027"
+  },
+  {
+   "t": "RACE.MI",
+   "n": "Ferrari",
+   "s": "Luxe",
+   "e": "PEA",
+   "i": 6,
+   "o": "Thème luxe proche de LVMH",
+   "th": "Rareté organisée, carnet plein, marges de luxe.",
+   "mh": "Multiple élevé, transition électrique.",
+   "r": [
+    "Échec de l'électrique",
+    "Multiple > 40x",
+    "Départ de la direction"
+   ],
+   "inv": "Carnet de commandes en recul"
+  },
+  {
+   "t": "UMG.AS",
+   "n": "Universal Music",
+   "s": "Conso",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "Rente sur catalogue, hausses de prix du streaming.",
+   "mh": "Musique générée par IA, streaming qui ralentit.",
+   "r": [
+    "Musique IA",
+    "Renégociations plateformes",
+    "Actionnariat Bolloré"
+   ],
+   "inv": "Croissance abonnements < 5 %"
+  },
+  {
+   "t": "ASML.AS",
+   "n": "ASML",
+   "s": "Semi-conducteurs",
+   "e": "PEA",
+   "i": 5,
+   "o": "Thème semi déjà lourd (NVDA, Nasdaq-100)",
+   "th": "Monopole de la lithographie EUV, indispensable à l'IA.",
+   "mh": "Cycle semi, restrictions export Chine.",
+   "r": [
+    "Export Chine",
+    "Report des capex fondeurs",
+    "Cyclicité"
+   ],
+   "inv": "Commandes nettes en baisse 3 trimestres"
+  },
+  {
+   "t": "SAP.DE",
+   "n": "SAP",
+   "s": "Logiciels",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "Migration cloud de l'ERP, revenus récurrents, IA métier.",
+   "mh": "Peur d'une disruption IA des logiciels.",
+   "r": [
+    "Disruption IA",
+    "Ralentissement cloud",
+    "Multiple"
+   ],
+   "inv": "Croissance cloud < 20 %"
+  },
+  {
+   "t": "DSY.PA",
+   "n": "Dassault Systèmes",
+   "s": "Logiciels",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "Logiciels 3D/PLM très récurrents, décotés vs historique.",
+   "mh": "Ralentissement industriel et Life Sciences.",
+   "r": [
+    "Croissance faible",
+    "Concurrence Siemens/PTC",
+    "IA"
+   ],
+   "inv": "Croissance < 3 % deux ans"
+  },
+  {
+   "t": "CAP.PA",
+   "n": "Capgemini",
+   "s": "Logiciels",
+   "e": "PEA",
+   "i": 4,
+   "o": "",
+   "th": "Services IT décotés, positionnement IA générative.",
+   "mh": "L'IA cannibalise les heures facturées.",
+   "r": [
+    "Déflation des services IT",
+    "Demande US",
+    "Marges"
+   ],
+   "inv": "Croissance organique négative en 2027"
+  },
+  {
+   "t": "ADYEN.AS",
+   "n": "Adyen",
+   "s": "Paiements",
+   "e": "PEA",
+   "i": 7,
+   "o": "Thème proche de Visa/MA",
+   "th": "Plateforme de paiement unifiée, marges élevées.",
+   "mh": "Concurrence Stripe, e-commerce plus lent.",
+   "r": [
+    "Parts de marché Stripe",
+    "Take-rate en baisse",
+    "Valorisation"
+   ],
+   "inv": "Croissance du volume net < 20 %"
+  },
+  {
+   "t": "WKL.AS",
+   "n": "Wolters Kluwer",
+   "s": "Logiciels",
+   "e": "PEA",
+   "i": 8,
+   "o": "",
+   "th": "Information pro (santé, fiscal, juridique) récurrente, rachats massifs.",
+   "mh": "Crainte d'une disruption par l'IA générative.",
+   "r": [
+    "IA qui banalise l'information",
+    "Croissance 6 % seulement",
+    "Dette 2x EBITDA"
+   ],
+   "inv": "Croissance organique < 4 %"
+  },
+  {
+   "t": "PLNW.PA",
+   "n": "Planisware",
+   "s": "Logiciels",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "SaaS de pilotage de portefeuilles projets, petit et très rentable.",
+   "mh": "Small cap peu liquide, exposition US.",
+   "r": [
+    "Liquidité",
+    "Concurrence",
+    "Valorisation"
+   ],
+   "inv": "Croissance < 15 %"
+  },
+  {
+   "t": "FNOX.ST",
+   "n": "Fortnox",
+   "s": "Logiciels",
+   "e": "PEA*",
+   "i": null,
+   "o": "Plus coté (introuvable sur Yahoo)",
+   "th": "SaaS comptable des PME suédoises, racheté par EQT : le titre n'est plus coté en bourse, à retirer de la watchlist.",
+   "mh": "Couronne, cycle PME.",
+   "r": [
+    "Retrait de cote",
+    "Saturation",
+    "Prix"
+   ],
+   "inv": "Retrait de cote"
+  },
+  {
+   "t": "UBI.PA",
+   "n": "Ubisoft",
+   "s": "Conso",
+   "e": "PEA",
+   "i": 2,
+   "o": "",
+   "th": "Spéculatif : restructuration, filiale avec Tencent.",
+   "mh": "Dette, lancements ratés.",
+   "r": [
+    "Dilution",
+    "Échecs de jeux",
+    "Gouvernance familiale"
+   ],
+   "inv": "Trésorerie négative persistante"
+  },
+  {
+   "t": "SAF.PA",
+   "n": "Safran",
+   "s": "Défense & Aéro",
+   "e": "PEA",
+   "i": 8,
+   "o": "",
+   "th": "Moteurs LEAP, après-vente très rentable, rachats d'actions.",
+   "mh": "Trafic aérien vs Moyen-Orient, chaîne d'approvisionnement.",
+   "r": [
+    "Problèmes LEAP",
+    "Approvisionnement",
+    "Tarifs US"
+   ],
+   "inv": "Guidance 2027 révisée en baisse"
+  },
+  {
+   "t": "HO.PA",
+   "n": "Thales",
+   "s": "Défense & Aéro",
+   "e": "PEA",
+   "i": 8,
+   "o": "",
+   "th": "Électronique de défense, cyber, carnet européen visible.",
+   "mh": "Cycle défense déjà en partie pricé, budget France.",
+   "r": [
+    "Paix en Ukraine (dé-rating)",
+    "Budget France",
+    "Exécution spatial"
+   ],
+   "inv": "Prises de commandes en baisse 2 ans"
+  },
+  {
+   "t": "RHM.DE",
+   "n": "Rheinmetall",
+   "s": "Défense & Aéro",
+   "e": "PEA",
+   "i": 6,
+   "o": "Thème défense (Thales)",
+   "th": "Munitions et blindés, commandes en explosion.",
+   "mh": "Multiple très élevé, sensible aux négociations de paix.",
+   "r": [
+    "Cessez-le-feu",
+    "Valorisation",
+    "Montée en capacité"
+   ],
+   "inv": "Carnet en baisse"
+  },
+  {
+   "t": "SU.PA",
+   "n": "Schneider Electric",
+   "s": "Industrie",
+   "e": "PEA",
+   "i": 8,
+   "o": "",
+   "th": "Électrification et data centers, croissance > 10 %, rachat de PTC.",
+   "mh": "Financement de PTC, taux élevés.",
+   "r": [
+    "Intégration PTC",
+    "Ralentissement data centers",
+    "Multiple"
+   ],
+   "inv": "Marge ajustée en recul"
+  },
+  {
+   "t": "LR.PA",
+   "n": "Legrand",
+   "s": "Industrie",
+   "e": "PEA",
+   "i": 6,
+   "o": "Proche de Schneider",
+   "th": "Équipements électriques, data centers, acquisitions ciblées.",
+   "mh": "Construction résidentielle faible.",
+   "r": [
+    "Bâtiment",
+    "Taux",
+    "Concurrence"
+   ],
+   "inv": "Croissance organique négative"
+  },
+  {
+   "t": "AI.PA",
+   "n": "Air Liquide",
+   "s": "Industrie",
+   "e": "PEA",
+   "i": 2,
+   "o": "Déjà détenu",
+   "th": "Gaz industriels, contrats longs, défensif.",
+   "mh": "Industrie européenne faible.",
+   "r": [
+    "Désindustrialisation",
+    "Énergie",
+    "Valorisation"
+   ],
+   "inv": "Marge en baisse 2 ans"
+  },
+  {
+   "t": "GTT.PA",
+   "n": "GTT",
+   "s": "Énergie",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "Cuves GNL quasi-monopolistiques, dividende élevé.",
+   "mh": "Cycle des commandes de méthaniers.",
+   "r": [
+    "Fin du cycle GNL",
+    "Concurrence chinoise",
+    "Sanctions"
+   ],
+   "inv": "Moins de 30 navires commandés par an"
+  },
+  {
+   "t": "TTE.PA",
+   "n": "TotalEnergies",
+   "s": "Énergie",
+   "e": "PEA",
+   "i": 6,
+   "o": "",
+   "th": "Pétrole, gaz, GNL et électricité, dividende 5-6 %, rachats.",
+   "mh": "Pétrole en baisse avec la détente USA-Iran.",
+   "r": [
+    "Brent bas",
+    "Transition",
+    "Fiscalité"
+   ],
+   "inv": "Brent < 55 $ durablement"
+  },
+  {
+   "t": "RNO.PA",
+   "n": "Renault",
+   "s": "Mobilité",
+   "e": "PEA",
+   "i": 3,
+   "o": "",
+   "th": "Décote, redressement, Dacia.",
+   "mh": "Guerre des prix des VE chinois.",
+   "r": [
+    "Concurrence chinoise",
+    "Cycle auto",
+    "Nissan"
+   ],
+   "inv": "Marge < 5 %"
+  },
+  {
+   "t": "MTU.PA",
+   "n": "Manitou",
+   "s": "Industrie",
+   "e": "PEA",
+   "i": 3,
+   "o": "",
+   "th": "Small cap de manutention, décotée, cyclique.",
+   "mh": "Cycle construction et agricole.",
+   "r": [
+    "Cycle",
+    "Liquidité",
+    "Tarifs US"
+   ],
+   "inv": "Perte nette"
+  },
+  {
+   "t": "SAN.PA",
+   "n": "Sanofi",
+   "s": "Santé",
+   "e": "PEA",
+   "i": 7,
+   "o": "",
+   "th": "Immunologie (Dupixent) + rachat d'Insmed pour la croissance post-2030.",
+   "mh": "Fin de brevet Dupixent, coût de l'acquisition.",
+   "r": [
+    "Intégration Insmed",
+    "Échecs du pipeline",
+    "Prix des médicaments US"
+   ],
+   "inv": "Échec des actifs clés d'Insmed"
+  },
+  {
+   "t": "SRT3.DE",
+   "n": "Sartorius",
+   "s": "Santé",
+   "e": "PEA",
+   "i": 5,
+   "o": "",
+   "th": "Équipements de bioproduction, reprise du cycle biotech.",
+   "mh": "Déstockage, dette.",
+   "r": [
+    "Reprise lente",
+    "Dette",
+    "Chine"
+   ],
+   "inv": "Croissance < 5 % en 2027"
+  },
+  {
+   "t": "NOVO-B.CO",
+   "n": "Novo Nordisk",
+   "s": "Santé",
+   "e": "PEA*",
+   "i": 7,
+   "o": "",
+   "th": "Obésité/diabète, la pilule Wegovy décolle, valorisation basse.",
+   "mh": "Concurrence Lilly, pression sur les prix US.",
+   "r": [
+    "Lilly (pilule orale)",
+    "Prix US",
+    "Génériques du sémaglutide"
+   ],
+   "inv": "Ventes Wegovy en déclin global"
+  },
+  {
+   "t": "ENX.PA",
+   "n": "Euronext",
+   "s": "Finance",
+   "e": "PEA",
+   "i": 7,
+   "o": "",
+   "th": "Infrastructure de marché, synergies, rachats d'actions.",
+   "mh": "Volumes de marché, concurrence.",
+   "r": [
+    "Baisse des volumes",
+    "Régulation",
+    "Acquisitions"
+   ],
+   "inv": "Revenus en baisse"
+  },
+  {
+   "t": "AMUN.PA",
+   "n": "Amundi",
+   "s": "Finance",
+   "e": "PEA",
+   "i": 5,
+   "o": "Gérant de ton ETF socle",
+   "th": "Gestion d'actifs, dividende élevé, ETF.",
+   "mh": "Pression sur les frais.",
+   "r": [
+    "Marchés baissiers",
+    "Frais",
+    "Décollecte"
+   ],
+   "inv": "Collecte négative 2 ans"
+  },
+  {
+   "t": "EDEN.PA",
+   "n": "Edenred",
+   "s": "Paiements",
+   "e": "PEA",
+   "i": 4,
+   "o": "",
+   "th": "Titres-restaurant, trésorerie rémunérée par les taux hauts.",
+   "mh": "Réforme des titres-restaurant.",
+   "r": [
+    "Réforme réglementaire",
+    "Baisse des taux",
+    "Concurrence"
+   ],
+   "inv": "Plafonnement des commissions"
+  },
+  {
+   "t": "PLX.PA",
+   "n": "Pluxee",
+   "s": "Paiements",
+   "e": "PEA",
+   "i": 4,
+   "o": "Doublon thème Edenred",
+   "th": "Spin-off de Sodexo, même modèle qu'Edenred.",
+   "mh": "Même risque réglementaire.",
+   "r": [
+    "Régulation",
+    "Taux",
+    "Exécution"
+   ],
+   "inv": "Plafonnement des commissions"
+  },
+  {
+   "t": "FDJU.PA",
+   "n": "FDJ United",
+   "s": "Conso",
+   "e": "PEA",
+   "i": 5,
+   "o": "",
+   "th": "Monopole de la loterie, rendement, intégration de Kindred.",
+   "mh": "Fiscalité des jeux.",
+   "r": [
+    "Hausse des taxes",
+    "Intégration Kindred",
+    "Régulation"
+   ],
+   "inv": "Hausse fiscale majeure"
+  },
+  {
+   "t": "INVE-B.ST",
+   "n": "Investor AB",
+   "s": "Finance",
+   "e": "PEA*",
+   "i": 7,
+   "o": "",
+   "th": "Holding Wallenberg diversifiée (ABB, Atlas Copco, AstraZeneca).",
+   "mh": "Couronne, décote de holding.",
+   "r": [
+    "Décote qui s'élargit",
+    "Couronne",
+    "Concentration"
+   ],
+   "inv": "ANR sous-performant 3 ans"
+  },
+  {
+   "t": "BOUV.OL",
+   "n": "Bouvet",
+   "s": "Logiciels",
+   "e": "PEA*",
+   "i": 4,
+   "o": "",
+   "th": "Petite ESN norvégienne rentable, dividende.",
+   "mh": "Petite cap, couronne.",
+   "r": [
+    "Liquidité",
+    "IA vs services",
+    "Change"
+   ],
+   "inv": "Marge < 8 %"
+  },
+  {
+   "t": "NVDA",
+   "n": "NVIDIA",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 1,
+   "o": "Déjà détenu + poids lourd MSCI World/Nasdaq",
+   "th": "Leader des GPU IA, écosystème CUDA.",
+   "mh": "Enquêtes, export Chine, volatilité extrême.",
+   "r": [
+    "Capex IA qui ralentit",
+    "Enquêtes",
+    "ASIC concurrents"
+   ],
+   "inv": "Revenus data center en baisse"
+  },
+  {
+   "t": "AVGO",
+   "n": "Broadcom",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 2,
+   "o": "Poids lourd MSCI World",
+   "th": "ASIC IA, réseau, logiciels VMware.",
+   "mh": "Concentration des clients.",
+   "r": [
+    "Clients hyperscalers",
+    "Dette",
+    "Cycle"
+   ],
+   "inv": "Perte d'un client ASIC majeur"
+  },
+  {
+   "t": "TSM",
+   "n": "TSMC ADR",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 4,
+   "o": "Thème semi lourd (TSMC hors MSCI World)",
+   "th": "Fonderie incontournable de l'IA.",
+   "mh": "Géopolitique de Taïwan.",
+   "r": [
+    "Taïwan",
+    "Tarifs US",
+    "Cycle"
+   ],
+   "inv": "Marge brute < 50 %"
+  },
+  {
+   "t": "AMD",
+   "n": "AMD",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 2,
+   "o": "Thème semi lourd",
+   "th": "GPU IA alternatifs, CPU serveurs.",
+   "mh": "Volatilité, domination NVIDIA.",
+   "r": [
+    "Exécution MI-series",
+    "Cycle PC",
+    "Valorisation"
+   ],
+   "inv": "Part de marché IA stagnante"
+  },
+  {
+   "t": "000660.KS",
+   "n": "SK Hynix",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 4,
+   "o": "Thème semi",
+   "th": "Mémoire HBM pour l'IA.",
+   "mh": "Cycle de la mémoire.",
+   "r": [
+    "Retournement du cycle",
+    "Samsung/Micron",
+    "Corée"
+   ],
+   "inv": "Prix HBM en baisse"
+  },
+  {
+   "t": "MRVL",
+   "n": "Marvell",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 2,
+   "o": "Thème semi",
+   "th": "ASIC sur mesure et optique data center.",
+   "mh": "Cycle, concentration clients.",
+   "r": [
+    "Clients",
+    "Cycle",
+    "Concurrence"
+   ],
+   "inv": "Perte d'un programme ASIC"
+  },
+  {
+   "t": "SMCI",
+   "n": "Super Micro",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 1,
+   "o": "Thème semi",
+   "th": "Serveurs IA, forte croissance.",
+   "mh": "Gouvernance comptable, marges faibles.",
+   "r": [
+    "Gouvernance",
+    "Marges",
+    "Concurrence Dell"
+   ],
+   "inv": "Nouveau retard de comptes"
+  },
+  {
+   "t": "6857.T",
+   "n": "Advantest",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 3,
+   "o": "Thème semi",
+   "th": "Testeurs de puces IA.",
+   "mh": "Yen, cycle.",
+   "r": [
+    "Cycle",
+    "Yen",
+    "Concentration"
+   ],
+   "inv": "Commandes en baisse"
+  },
+  {
+   "t": "NVTS",
+   "n": "Navitas",
+   "s": "Semi-conducteurs",
+   "e": "CTO",
+   "i": 1,
+   "o": "Thème semi",
+   "th": "Spéculatif : GaN/SiC pour data centers.",
+   "mh": "Pertes, dilution.",
+   "r": [
+    "Dilution",
+    "Trésorerie",
+    "Exécution"
+   ],
+   "inv": "Trésorerie < 12 mois"
+  },
+  {
+   "t": "MSFT",
+   "n": "Microsoft",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Poids lourd MSCI World/Nasdaq",
+   "th": "Cloud Azure, IA, logiciels.",
+   "mh": "Capex IA massif.",
+   "r": [
+    "Retour sur capex IA",
+    "Régulation",
+    "Valorisation"
+   ],
+   "inv": "Croissance Azure < 20 %"
+  },
+  {
+   "t": "GOOGL",
+   "n": "Alphabet A",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Déjà détenu (classe C) + poids lourd",
+   "th": "Recherche, Cloud, YouTube, Waymo, TPU.",
+   "mh": "Antitrust, IA vs recherche.",
+   "r": [
+    "Antitrust",
+    "Cannibalisation de la recherche",
+    "Capex"
+   ],
+   "inv": "Part de la recherche en baisse"
+  },
+  {
+   "t": "AMZN",
+   "n": "Amazon",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Poids lourd MSCI World",
+   "th": "AWS, publicité, commerce.",
+   "mh": "Capex IA.",
+   "r": [
+    "AWS",
+    "Consommation",
+    "Régulation"
+   ],
+   "inv": "Croissance AWS < 15 %"
+  },
+  {
+   "t": "META",
+   "n": "Meta",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Poids lourd MSCI World",
+   "th": "Publicité, IA, lunettes.",
+   "mh": "Capex Reality Labs.",
+   "r": [
+    "Capex",
+    "Régulation",
+    "Pub cyclique"
+   ],
+   "inv": "Utilisateurs en baisse"
+  },
+  {
+   "t": "AAPL",
+   "n": "Apple",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Poids lourd MSCI World",
+   "th": "Écosystème, services.",
+   "mh": "Chine, retard IA.",
+   "r": [
+    "Chine",
+    "Antitrust App Store",
+    "Innovation"
+   ],
+   "inv": "Services en baisse"
+  },
+  {
+   "t": "ORCL",
+   "n": "Oracle",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 3,
+   "o": "Présent MSCI World",
+   "th": "Cloud IA (OCI), contrats géants.",
+   "mh": "Dette massive, dépendance à OpenAI.",
+   "r": [
+    "Dette",
+    "Concentration clients",
+    "Exécution"
+   ],
+   "inv": "FCF négatif prolongé"
+  },
+  {
+   "t": "NOW",
+   "n": "ServiceNow",
+   "s": "Logiciels",
+   "e": "CTO",
+   "i": 4,
+   "o": "Présent MSCI World",
+   "th": "Plateforme de workflows, IA agentique.",
+   "mh": "Peur de disruption IA des SaaS.",
+   "r": [
+    "Disruption IA",
+    "Valorisation",
+    "Sièges"
+   ],
+   "inv": "Croissance < 15 %"
+  },
+  {
+   "t": "PLTR",
+   "n": "Palantir",
+   "s": "Logiciels",
+   "e": "CTO",
+   "i": 2,
+   "o": "Présent MSCI World",
+   "th": "Logiciels data/IA pour États et entreprises.",
+   "mh": "Valorisation extrême.",
+   "r": [
+    "Multiple",
+    "Contrats publics",
+    "Concurrence"
+   ],
+   "inv": "Croissance commerciale US < 30 %"
+  },
+  {
+   "t": "RDDT",
+   "n": "Reddit",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 1,
+   "o": "Déjà détenu",
+   "th": "Données pour l'IA, publicité.",
+   "mh": "Trafic venant de Google, monétisation.",
+   "r": [
+    "Dépendance à Google",
+    "Pub",
+    "Volatilité"
+   ],
+   "inv": "Utilisateurs actifs en baisse"
+  },
+  {
+   "t": "V",
+   "n": "Visa",
+   "s": "Paiements",
+   "e": "CTO",
+   "i": 5,
+   "o": "Présent MSCI World",
+   "th": "Réseau de paiement, marges > 60 %.",
+   "mh": "Régulation des commissions, stablecoins.",
+   "r": [
+    "Régulation",
+    "Stablecoins",
+    "Antitrust"
+   ],
+   "inv": "Croissance des volumes < 6 %"
+  },
+  {
+   "t": "MA",
+   "n": "Mastercard",
+   "s": "Paiements",
+   "e": "CTO",
+   "i": 5,
+   "o": "Présent MSCI World",
+   "th": "Réseau de paiement, services à valeur ajoutée.",
+   "mh": "Régulation, stablecoins.",
+   "r": [
+    "Régulation",
+    "Stablecoins",
+    "Change"
+   ],
+   "inv": "Croissance des volumes < 6 %"
+  },
+  {
+   "t": "BLK",
+   "n": "BlackRock",
+   "s": "Finance",
+   "e": "CTO",
+   "i": 4,
+   "o": "Présent MSCI World",
+   "th": "Leader des ETF, actifs privés.",
+   "mh": "Marchés baissiers.",
+   "r": [
+    "Marchés",
+    "Frais",
+    "Intégrations"
+   ],
+   "inv": "Décollecte"
+  },
+  {
+   "t": "SPGI",
+   "n": "S&P Global",
+   "s": "Finance",
+   "e": "CTO",
+   "i": 5,
+   "o": "Présent MSCI World",
+   "th": "Notations et indices, quasi-monopole.",
+   "mh": "Cycle des émissions obligataires.",
+   "r": [
+    "Émissions",
+    "Régulation",
+    "Scission"
+   ],
+   "inv": "Revenus de notation en baisse"
+  },
+  {
+   "t": "COST",
+   "n": "Costco",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 4,
+   "o": "Présent MSCI World",
+   "th": "Abonnements, fidélité, défensif.",
+   "mh": "Valorisation très élevée.",
+   "r": [
+    "Multiple",
+    "Marges",
+    "Concurrence"
+   ],
+   "inv": "Renouvellement < 90 %"
+  },
+  {
+   "t": "MCD",
+   "n": "McDonald's",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 4,
+   "o": "",
+   "th": "Franchise et immobilier, défensif.",
+   "mh": "Consommateur US modeste.",
+   "r": [
+    "Trafic",
+    "Médicaments GLP-1",
+    "Coûts"
+   ],
+   "inv": "Ventes comparables négatives"
+  },
+  {
+   "t": "KO",
+   "n": "Coca-Cola",
+   "s": "Agro",
+   "e": "CTO",
+   "i": 3,
+   "o": "Proche de l'agro (Danone, Nestlé)",
+   "th": "Marque, distribution, dividende.",
+   "mh": "Croissance faible, GLP-1.",
+   "r": [
+    "GLP-1",
+    "Change",
+    "Valorisation"
+   ],
+   "inv": "Volumes en baisse"
+  },
+  {
+   "t": "EL",
+   "n": "Estée Lauder",
+   "s": "Luxe",
+   "e": "CTO",
+   "i": 3,
+   "o": "Proche de L'Oréal",
+   "th": "Redressement, forte décote.",
+   "mh": "Chine, travel retail.",
+   "r": [
+    "Chine",
+    "Exécution",
+    "Dette"
+   ],
+   "inv": "Pas de croissance en 2027"
+  },
+  {
+   "t": "NFLX",
+   "n": "Netflix",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 4,
+   "o": "Présent MSCI World",
+   "th": "Leader du streaming, publicité.",
+   "mh": "Valorisation.",
+   "r": [
+    "Concurrence",
+    "Contenus",
+    "Multiple"
+   ],
+   "inv": "Abonnés en baisse"
+  },
+  {
+   "t": "SPOT",
+   "n": "Spotify",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 5,
+   "o": "",
+   "th": "Hausses de prix, marges en progression.",
+   "mh": "Labels, IA.",
+   "r": [
+    "Labels",
+    "Concurrence",
+    "Prix"
+   ],
+   "inv": "Marge brute < 30 %"
+  },
+  {
+   "t": "TTWO",
+   "n": "Take-Two",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 4,
+   "o": "",
+   "th": "GTA VI, franchise majeure.",
+   "mh": "Report de lancement.",
+   "r": [
+    "Report de GTA VI",
+    "Coûts",
+    "Dépendance à un titre"
+   ],
+   "inv": "Échec commercial de GTA VI"
+  },
+  {
+   "t": "7974.T",
+   "n": "Nintendo",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 6,
+   "o": "",
+   "th": "Switch 2, licences uniques, trésorerie nette.",
+   "mh": "Yen, cycle console.",
+   "r": [
+    "Cycle",
+    "Yen",
+    "Ventes Switch 2"
+   ],
+   "inv": "Ventes Switch 2 sous objectif"
+  },
+  {
+   "t": "ABNB",
+   "n": "Airbnb",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 4,
+   "o": "",
+   "th": "Plateforme sans actifs, FCF élevé.",
+   "mh": "Régulation des locations.",
+   "r": [
+    "Régulation",
+    "Concurrence",
+    "Croissance"
+   ],
+   "inv": "Nuits réservées en baisse"
+  },
+  {
+   "t": "BKNG",
+   "n": "Booking",
+   "s": "Conso",
+   "e": "CTO",
+   "i": 5,
+   "o": "Présent MSCI World",
+   "th": "Leader du voyage en ligne, rachats.",
+   "mh": "Agents IA qui court-circuitent.",
+   "r": [
+    "IA agentique",
+    "Google",
+    "Voyage cyclique"
+   ],
+   "inv": "Nuits en baisse"
+  },
+  {
+   "t": "UBER",
+   "n": "Uber",
+   "s": "Mobilité",
+   "e": "CTO",
+   "i": 4,
+   "o": "Présent MSCI World",
+   "th": "Réseau mobilité/livraison, FCF.",
+   "mh": "Robotaxis.",
+   "r": [
+    "Robotaxis",
+    "Régulation",
+    "Concurrence"
+   ],
+   "inv": "Croissance des courses < 10 %"
+  },
+  {
+   "t": "LYFT",
+   "n": "Lyft",
+   "s": "Mobilité",
+   "e": "CTO",
+   "i": 2,
+   "o": "Doublon Uber",
+   "th": "Numéro 2 US, moins cher.",
+   "mh": "Taille, robotaxis.",
+   "r": [
+    "Échelle",
+    "Robotaxis",
+    "Prix"
+   ],
+   "inv": "Pertes de parts de marché"
+  },
+  {
+   "t": "TSLA",
+   "n": "Tesla",
+   "s": "Mobilité",
+   "e": "CTO",
+   "i": 2,
+   "o": "Présent MSCI World/Nasdaq",
+   "th": "Optionnalité robotaxi et robots.",
+   "mh": "Ventes auto en baisse, valorisation.",
+   "r": [
+    "Ventes",
+    "Valorisation",
+    "Gouvernance"
+   ],
+   "inv": "Marge auto < 10 %"
+  },
+  {
+   "t": "1211.HK",
+   "n": "BYD",
+   "s": "Mobilité",
+   "e": "CTO",
+   "i": 5,
+   "o": "",
+   "th": "Leader chinois des VE, intégration verticale.",
+   "mh": "Guerre des prix, tarifs UE.",
+   "r": [
+    "Prix",
+    "Tarifs",
+    "Géopolitique"
+   ],
+   "inv": "Marge brute < 15 %"
+  },
+  {
+   "t": "BABA",
+   "n": "Alibaba ADR",
+   "s": "Big Tech",
+   "e": "CTO",
+   "i": 5,
+   "o": "",
+   "th": "Cloud IA chinois, décote.",
+   "mh": "Géopolitique, régulation chinoise.",
+   "r": [
+    "Chine",
+    "Radiation des ADR",
+    "Concurrence"
+   ],
+   "inv": "Cloud en décroissance"
+  },
+  {
+   "t": "BMI",
+   "n": "Badger Meter",
+   "s": "Industrie",
+   "e": "CTO",
+   "i": 6,
+   "o": "",
+   "th": "Compteurs d'eau connectés, niche rentable.",
+   "mh": "Multiple élevé, construction.",
+   "r": [
+    "Multiple",
+    "Cycle",
+    "Concurrence"
+   ],
+   "inv": "Croissance < 5 %"
+  },
+  {
+   "t": "ASTS",
+   "n": "AST SpaceMobile",
+   "s": "Industrie",
+   "e": "CTO",
+   "i": 1,
+   "o": "",
+   "th": "Spéculatif : satellite vers smartphone.",
+   "mh": "Trésorerie, exécution.",
+   "r": [
+    "Dilution",
+    "Lancements",
+    "Starlink"
+   ],
+   "inv": "Retard de déploiement"
+  },
+  {
+   "t": "MEDI.OL",
+   "n": "Medistim",
+   "s": "Santé",
+   "e": "PEA*",
+   "i": 6,
+   "o": "",
+   "th": "Niche de la chirurgie cardiaque, sans dette.",
+   "mh": "Petite cap, couronne.",
+   "r": [
+    "Liquidité",
+    "Adoption",
+    "Change"
+   ],
+   "inv": "Croissance < 5 %"
+  },
+  {
+   "t": "NESN.SW",
+   "n": "Nestlé",
+   "s": "Agro",
+   "e": "CTO",
+   "i": 1,
+   "o": "Doublon agro (Savencia, Danone)",
+   "th": "Défensif, marques, dividende.",
+   "mh": "Restructuration, croissance faible.",
+   "r": [
+    "Volumes",
+    "Dette",
+    "Franc suisse"
+   ],
+   "inv": "Croissance organique < 2 %"
+  },
+  {
+   "t": "SAVE.PA",
+   "n": "Savencia",
+   "s": "Agro",
+   "e": "PEA",
+   "i": 1,
+   "o": "Déjà détenu via PEE + employeur",
+   "th": "Fromager familial décoté.",
+   "mh": "Prix du lait.",
+   "r": [
+    "Concentration employeur",
+    "Lait",
+    "Liquidité"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "SPACEX",
+   "n": "SpaceX",
+   "s": "Non coté",
+   "e": "—",
+   "i": null,
+   "o": "",
+   "th": "Suivi manuel (valorisation secondaire). Vérifier le statut de cotation.",
+   "mh": "—",
+   "r": [
+    "Accès",
+    "Liquidité",
+    "Valorisation"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "ANTHROPIC",
+   "n": "Anthropic",
+   "s": "Non coté",
+   "e": "—",
+   "i": null,
+   "o": "",
+   "th": "Suivi manuel (valorisation secondaire).",
+   "mh": "—",
+   "r": [
+    "Accès",
+    "Liquidité",
+    "Valorisation"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "DCAM.PA",
+   "n": "Amundi PEA Monde",
+   "s": "ETF & couverture",
+   "e": "PEA",
+   "i": null,
+   "o": "Socle actuel (benchmark)",
+   "th": "Benchmark du portefeuille.",
+   "mh": "—",
+   "r": [
+    "—",
+    "—",
+    "—"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "IGLN.L",
+   "n": "iShares Physical Gold",
+   "s": "ETF & couverture",
+   "e": "CTO",
+   "i": 6,
+   "o": "",
+   "th": "Couverture or (non éligible PEA).",
+   "mh": "Or déjà très haut.",
+   "r": [
+    "Or en baisse",
+    "Dollar",
+    "Aucun rendement"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "GOLD.MI",
+   "n": "Amundi Physical Gold",
+   "s": "ETF & couverture",
+   "e": "CTO",
+   "i": 6,
+   "o": "Doublon IGLN",
+   "th": "ETC or en euros (non éligible PEA).",
+   "mh": "Or déjà très haut.",
+   "r": [
+    "Or en baisse",
+    "Dollar",
+    "Aucun rendement"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "X13E.MI",
+   "n": "Euro Gov Bond 1-3Y",
+   "s": "ETF & couverture",
+   "e": "AV",
+   "i": 7,
+   "o": "",
+   "th": "Obligations courtes : cohérent pour l'apport immobilier 2027-28 (via AV/CTO).",
+   "mh": "Gain limité si les taux baissent peu.",
+   "r": [
+    "Inflation",
+    "Taux",
+    "Change nul"
+   ],
+   "inv": "—"
+  },
+  {
+   "t": "BTC-EUR",
+   "n": "Bitcoin",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 3,
+   "o": "Déjà détenu (Finary + Trade Republic)",
+   "th": "Réserve de valeur numérique, offre plafonnée, ETF spot.",
+   "mh": "Taux réels élevés, mauvais mois de novembre.",
+   "r": [
+    "Régulation",
+    "Volatilité extrême",
+    "Liquidité macro"
+   ],
+   "inv": "Cassure durable sous le plus-bas 52 semaines",
+   "cg": "bitcoin"
+  },
+  {
+   "t": "ETH-EUR",
+   "n": "Ethereum",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 2,
+   "o": "Déjà détenu (Trade Republic)",
+   "th": "Plateforme de smart contracts, staking, ETF.",
+   "mh": "Concurrence des blockchains rapides, frais en baisse.",
+   "r": [
+    "Concurrence Solana",
+    "Régulation du staking",
+    "Volatilité"
+   ],
+   "inv": "Part DeFi/stablecoins en recul",
+   "cg": "ethereum"
+  },
+  {
+   "t": "SOL-EUR",
+   "n": "Solana",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 1,
+   "o": "Déjà détenu (Trade Republic)",
+   "th": "Blockchain rapide, forte activité.",
+   "mh": "Bêta élevé au marché crypto.",
+   "r": [
+    "Pannes réseau",
+    "Concentration",
+    "Volatilité"
+   ],
+   "inv": "Activité on-chain en chute",
+   "cg": "solana"
+  },
+  {
+   "t": "XRP-EUR",
+   "n": "XRP",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 2,
+   "o": "",
+   "th": "Paiements transfrontaliers, ETF.",
+   "mh": "Spéculatif.",
+   "r": [
+    "Adoption bancaire faible",
+    "Concentration Ripple",
+    "Volatilité"
+   ],
+   "inv": "—",
+   "cg": "ripple"
+  },
+  {
+   "t": "BNB-EUR",
+   "n": "BNB",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 1,
+   "o": "",
+   "th": "Jeton de l'écosystème Binance.",
+   "mh": "Risque réglementaire Binance.",
+   "r": [
+    "Régulation Binance",
+    "Concentration",
+    "Volatilité"
+   ],
+   "inv": "—",
+   "cg": "binancecoin"
+  },
+  {
+   "t": "LINK-EUR",
+   "n": "Chainlink",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 2,
+   "o": "",
+   "th": "Oracles, tokenisation d'actifs réels.",
+   "mh": "Captation de valeur par le jeton.",
+   "r": [
+    "Captation de valeur",
+    "Concurrence",
+    "Volatilité"
+   ],
+   "inv": "—",
+   "cg": "chainlink"
+  },
+  {
+   "t": "ADA-EUR",
+   "n": "Cardano",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 1,
+   "o": "",
+   "th": "Blockchain historique, communauté forte.",
+   "mh": "Usage faible.",
+   "r": [
+    "Faible adoption",
+    "Concurrence",
+    "Volatilité"
+   ],
+   "inv": "—",
+   "cg": "cardano"
+  },
+  {
+   "t": "DOGE-EUR",
+   "n": "Dogecoin",
+   "s": "Crypto",
+   "e": "Crypto",
+   "i": 0,
+   "o": "",
+   "th": "Mème, purement spéculatif.",
+   "mh": "—",
+   "r": [
+    "Aucun fondamental",
+    "Inflation monétaire",
+    "Volatilité"
+   ],
+   "inv": "—",
+   "cg": "dogecoin"
+  }
+ ]
+}

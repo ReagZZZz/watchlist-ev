@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Watchlist EV+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: terminal de marché, sobre, chiffres d'abord
+   IDEA: un écran de cotation Bloomberg / Trade Republic
+   PICTURE: le tableau live et le Top 10 EV+ sont l'image
+   COLOUR+TYPE: noir profond, blanc, vert signal, rouge alerte ; Inter Tight + Plex Mono pour les chiffres
+   LAYOUT: barre de contrôle, Top 10, filtres, tableau, fiche en panneau */
+:root{color-scheme:dark;--bg:#0a0c0b;--pan:#121614;--line:#232a26;--ink:#eef2ef;--mut:#8a958f;--go:#2fd18b;--near:#e8c547;--no:#ef5b5b;--acc:#7cc4ff}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Inter Tight",system-ui,sans-serif;overflow-x:clip}
+.num,td.r{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+header{padding:20px max(4vw,14px) 8px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between}
+h1{font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0;font-weight:800;text-wrap:balance}
+h2{font-size:20px;margin:0 0 10px}
+.sub{color:var(--mut);font-size:13px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
+input,select,button{font:inherit;font-size:16px;color:var(--ink);background:var(--pan);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:0 12px}
+input:focus,select:focus,button:focus{outline:2px solid var(--acc);outline-offset:1px}
+button{cursor:pointer;font-weight:600}
+button.pri{background:var(--go);color:#04140b;border-color:var(--go)}
+.band{padding:10px max(4vw,14px)}
+.state{font-size:13px;color:var(--mut);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--mut)}
+.top{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer}
+.card:hover{border-color:var(--acc)}
+.card b{font-size:16px}.card .big{font-size:22px;font-weight:600}
+.rk{color:var(--mut);font-size:13px}
+.flt{display:flex;flex-wrap:wrap;gap:8px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--mut);font-weight:600;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;position:sticky;top:0;background:var(--bg)}
+td{padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.r,th.r{text-align:right}
+tr.row{cursor:pointer}tr.row:hover td{background:#141a17}
+.pos{color:var(--go)}.neg{color:var(--no)}
+.badge{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.b-go{color:var(--go);border-color:var(--go)}.b-near{color:var(--near);border-color:var(--near)}.b-no{color:var(--no);border-color:#5a2a2a}.b-na{color:var(--mut)}
+.b-dup{color:#ffb4a8;border-color:#6b3b34}
+.sec td{background:#0f1311;color:var(--acc);font-weight:600;font-size:13px}
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:9}
+#sheet.on{display:block}
+#sheet .in{position:absolute;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--pan);border-left:1px solid var(--line);overflow-y:auto;padding:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.tier{border:1px solid var(--line);border-radius:10px;padding:10px}
+.tier .big{font-size:19px;font-weight:600}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px 12px;font-size:13px}
+.kv span{color:var(--mut);display:block}
+ul{padding-left:18px;margin:6px 0}
+.note{font-size:13px;color:var(--mut)}
+details{margin-top:14px}summary{cursor:pointer;color:var(--acc);min-height:44px;display:flex;align-items:center}
+@media(max-width:600px){.grid3{grid-template-columns:1fr}td,th{padding:7px 6px}table{font-size:13px}.hide-s{display:none}}
+@media(prefers-reduced-motion:no-preference){.card,tr.row td{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Watchlist EV+</h1>
+    <div class="sub">93 lignes (actions, ETF, crypto) · prix convertis en € · paliers calculés en direct · pas un conseil en investissement</div>
+  </div>
+  <div class="ctrl">
+    <label>Cash disponible (€)<input id="cash" type="number" inputmode="decimal" min="0" step="50" placeholder="ex. 2000" style="width:140px"></label>
+    <label>Budget par ligne (%)<input id="lineP" type="number" min="1" max="100" step="1" value="10" style="width:100px"></label>
+    <label>Clé Finnhub (optionnel)<input id="fhk" type="text" placeholder="US temps réel + PER" style="width:160px"></label>
+    <label>Proxy perso (Worker)<input id="pxy" type="url" placeholder="https://xxx.workers.dev" style="width:200px"></label>
+    <label>Clé CoinGecko (optionnel)<input id="cgk" type="text" placeholder="crypto (recommandé)" style="width:140px"></label>
+    <button id="refresh" class="pri">Rafraîchir</button>
+  </div>
+</header>
+
+<div class="band state" id="state"><span class="dot" id="dot"></span><span id="stateTxt">Initialisation…</span><span id="wsTxt"></span></div>
+
+<section class="band">
+  <h2>Top 10 EV+ du moment</h2>
+  <div class="top" id="top"></div>
+  <p class="note">Score EV+ (0-100) = 40 % impact portefeuille + 25 % décote vs plus-haut 52 sem. + 20 % RSI + 15 % proximité du palier 1. Clique sur une carte pour la fiche.</p>
+</section>
+
+<section class="band">
+  <div class="flt">
+    <select id="fEnv" aria-label="Enveloppe"><option value="">Toutes enveloppes</option><option>PEA</option><option>CTO</option><option value="AV">Assurance-vie</option><option>Crypto</option></select>
+    <select id="fSec" aria-label="Secteur"></select>
+    <select id="fSt" aria-label="Statut"><option value="">Tous statuts</option><option value="go">🟢 Prix d'entrée atteint</option><option value="near">🟡 Proche &lt; 5 %</option><option value="no">🔴 Trop cher</option><option value="na">⚪ Sans données</option></select>
+    <input id="fQ" type="search" placeholder="Rechercher nom ou ticker" aria-label="Recherche">
+    <label style="flex-direction:row;align-items:center;gap:6px"><input id="fDup" type="checkbox" style="min-height:20px;width:20px"> Masquer les doublons</label>
+  </div>
+</section>
+
+<section class="band scroll">
+  <table>
+    <thead><tr>
+      <th data-k="n">Nom</th><th data-k="t" class="hide-s">Ticker</th><th data-k="pe" class="r">Prix €</th><th data-k="chg" class="r">Var. j</th>
+      <th data-k="d1" class="r">Dist. P1</th><th data-k="rsi" class="r hide-s">RSI</th><th data-k="env">Env.</th><th data-k="ev" class="r">EV+</th><th data-k="st">Statut</th><th>Doublon</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+</section>
+
+<section class="band note">
+  <p><b>Méthode des paliers.</b> P1 tactique (30 %) : MM50 si le cours est au-dessus, sinon MM200, sinon cours − 1 ATR. P2 cœur (40 %) : 82,5 % de ta valeur intrinsèque si tu l'as saisie dans la fiche (marge de sécurité de 17,5 %), sinon proxy technique min(P1, MM200) − 1,5 ATR. P3 capitulation (30 %) : min(plus-bas 52 sem., P2 × 0,90). Alerte 🟢 si cours ≤ P1 ou RSI(14) &lt; 30.</p>
+  <p><b>Données.</b> Actions et crypto : Yahoo Finance (graphique 1 an, quotidien) via ton proxy perso s'il est renseigné, puis corsproxy.io, corsfix, allorigins, codetabs, et en option le flux temps réel Finnhub (websocket, 50 titres US max). Crypto : CoinGecko en source principale (appel direct en euros, sans proxy ; historique recalculé une fois par jour), secours Binance ; prix crypto rafraîchis en continu par le websocket Binance. Instantané crypto du 24/11 20h30 : RSI approximatif (série CoinGecko à pas de ~3 jours) ; repli sur le dernier relevé réussi gardé dans ton navigateur, puis sur un instantané figé (date indiquée). PER et rendement : uniquement avec une clé Finnhub gratuite, surtout pour les titres US. Scores d'impact, thèses et risques : grille qualitative rédigée par Claude le 24/11/2026, à challenger.</p>
+</section>
+
+<div id="sheet" role="dialog" aria-modal="true"><div class="in" id="sheetIn"></div></div>
+
+<script>
+{
+// [ticker, nom, secteur, enveloppe, impact(0-10|null), doublon, thèse, vents contraires, risques a|b|c, invalidation]
+const D=[
+['MC.PA','LVMH','Luxe','PEA',4,'Déjà détenu','N°1 mondial du luxe, pricing power, bilan solide, FCF élevé.','Luxe aspirationnel en panne (Chine, US), euro fort.','Chine durablement faible|Effet de change USD|Succession Arnault','Croissance organique négative 4 trimestres de suite'],
+['KER.PA','Kering','Luxe','PEA',4,'','Pari de redressement de Gucci, forte décote vs pairs.','Bas de cycle du luxe, dette élevée.','Échec du relaunch Gucci|Endettement|Cessions forcées','Marge Gucci < 10 % durablement'],
+['OR.PA',"L'Oréal",'Luxe','PEA',5,'','Leader mondial de la beauté, ROIC > WACC durable.','Chine molle, multiple historiquement élevé.','Normalisation post-boom beauté|Travel retail|Valorisation','Croissance organique < 3 % sur 12 mois'],
+['EL.PA','EssilorLuxottica','Santé','PEA',7,'','Quasi-monopole de l\'optique, lunettes connectées Meta, récurrence.','Doutes sur les lunettes IA, -40 % sur un an.','Concurrence lunettes IA (Apple, Alibaba)|Multiple encore élevé|Litiges concurrence','Perte du partenariat Meta ou marge < 18 %'],
+['BN.PA','Danone','Agro','PEA',2,'Doublon agro (Savencia PEE)','Défensif, nutrition spécialisée, restructuration réussie.','Coûts laitiers, pression de la distribution.','Volumes en baisse|Inflation des intrants|Change émergents','Marge < 12 % ou volumes négatifs'],
+['RI.PA','Pernod Ricard','Conso','PEA',4,'','Spiritueux premium, décote historique après déstockage.','Baisse structurelle de l\'alcool, tarifs Chine/US.','Déclin générationnel|Taxes cognac Chine|Dette','Ventes organiques négatives en 2027'],
+['RACE.MI','Ferrari','Luxe','PEA',6,'Thème luxe proche de LVMH','Rareté organisée, carnet plein, marges de luxe.','Multiple élevé, transition électrique.','Échec de l\'électrique|Multiple > 40x|Départ de la direction','Carnet de commandes en recul'],
+['UMG.AS','Universal Music','Conso','PEA',6,'','Rente sur catalogue, hausses de prix du streaming.','Musique générée par IA, streaming qui ralentit.','Musique IA|Renégociations plateformes|Actionnariat Bolloré','Croissance abonnements < 5 %'],
+['ASML.AS','ASML','Semi-conducteurs','PEA',5,'Thème semi déjà lourd (NVDA, Nasdaq-100)','Monopole de la lithographie EUV, indispensable à l\'IA.','Cycle semi, restrictions export Chine.','Export Chine|Report des capex fondeurs|Cyclicité','Commandes nettes en baisse 3 trimestres'],
+['SAP.DE','SAP','Logiciels','PEA',6,'','Migration cloud de l\'ERP, revenus récurrents, IA métier.','Peur d\'une disruption IA des logiciels.','Disruption IA|Ralentissement cloud|Multiple','Croissance cloud < 20 %'],
+['DSY.PA','Dassault Systèmes','Logiciels','PEA',6,'','Logiciels 3D/PLM très récurrents, décotés vs historique.','Ralentissement industriel et Life Sciences.','Croissance faible|Concurrence Siemens/PTC|IA','Croissance < 3 % deux ans'],
+['CAP.PA','Capgemini','Logiciels','PEA',4,'','Services IT décotés, positionnement IA générative.','L\'IA cannibalise les heures facturées.','Déflation des services IT|Demande US|Marges','Croissance organique négative en 2027'],
+['ADYEN.AS','Adyen','Paiements','PEA',7,'Thème proche de Visa/MA','Plateforme de paiement unifiée, marges élevées.','Concurrence Stripe, e-commerce plus lent.','Parts de marché Stripe|Take-rate en baisse|Valorisation','Croissance du volume net < 20 %'],
+['WKL.AS','Wolters Kluwer','Logiciels','PEA',8,'','Information pro (santé, fiscal, juridique) récurrente, rachats massifs.','Crainte d\'une disruption par l\'IA générative.','IA qui banalise l\'information|Croissance 6 % seulement|Dette 2x EBITDA','Croissance organique < 4 %'],
+['PLNW.PA','Planisware','Logiciels','PEA',6,'','SaaS de pilotage de portefeuilles projets, petit et très rentable.','Small cap peu liquide, exposition US.','Liquidité|Concurrence|Valorisation','Croissance < 15 %'],
+['FNOX.ST','Fortnox','Logiciels','PEA*',null,'Plus coté (introuvable sur Yahoo)','SaaS comptable des PME suédoises, racheté par EQT : le titre n\'est plus coté en bourse, à retirer de la watchlist.','Couronne, cycle PME.','Retrait de cote|Saturation|Prix','Retrait de cote'],
+['UBI.PA','Ubisoft','Conso','PEA',2,'','Spéculatif : restructuration, filiale avec Tencent.','Dette, lancements ratés.','Dilution|Échecs de jeux|Gouvernance familiale','Trésorerie négative persistante'],
+['SAF.PA','Safran','Défense & Aéro','PEA',8,'','Moteurs LEAP, après-vente très rentable, rachats d\'actions.','Trafic aérien vs Moyen-Orient, chaîne d\'approvisionnement.','Problèmes LEAP|Approvisionnement|Tarifs US','Guidance 2027 révisée en baisse'],
+['HO.PA','Thales','Défense & Aéro','PEA',8,'','Électronique de défense, cyber, carnet européen visible.','Cycle défense déjà en partie pricé, budget France.','Paix en Ukraine (dé-rating)|Budget France|Exécution spatial','Prises de commandes en baisse 2 ans'],
+['RHM.DE','Rheinmetall','Défense & Aéro','PEA',6,'Thème défense (Thales)','Munitions et blindés, commandes en explosion.','Multiple très élevé, sensible aux négociations de paix.','Cessez-le-feu|Valorisation|Montée en capacité','Carnet en baisse'],
+['SU.PA','Schneider Electric','Industrie','PEA',8,'','Électrification et data centers, croissance > 10 %, rachat de PTC.','Financement de PTC, taux élevés.','Intégration PTC|Ralentissement data centers|Multiple','Marge ajustée en recul'],
+['LR.PA','Legrand','Industrie','PEA',6,'Proche de Schneider','Équipements électriques, data centers, acquisitions ciblées.','Construction résidentielle faible.','Bâtiment|Taux|Concurrence','Croissance organique négative'],
+['AI.PA','Air Liquide','Industrie','PEA',2,'Déjà détenu','Gaz industriels, contrats longs, défensif.','Industrie européenne faible.','Désindustrialisation|Énergie|Valorisation','Marge en baisse 2 ans'],
+['GTT.PA','GTT','Énergie','PEA',6,'','Cuves GNL quasi-monopolistiques, dividende élevé.','Cycle des commandes de méthaniers.','Fin du cycle GNL|Concurrence chinoise|Sanctions','Moins de 30 navires commandés par an'],
+['TTE.PA','TotalEnergies','Énergie','PEA',6,'','Pétrole, gaz, GNL et électricité, dividende 5-6 %, rachats.','Pétrole en baisse avec la détente USA-Iran.','Brent bas|Transition|Fiscalité','Brent < 55 $ durablement'],
+['RNO.PA','Renault','Mobilité','PEA',3,'','Décote, redressement, Dacia.','Guerre des prix des VE chinois.','Concurrence chinoise|Cycle auto|Nissan','Marge < 5 %'],
+['MTU.PA','Manitou','Industrie','PEA',3,'','Small cap de manutention, décotée, cyclique.','Cycle construction et agricole.','Cycle|Liquidité|Tarifs US','Perte nette'],
+['SAN.PA','Sanofi','Santé','PEA',7,'','Immunologie (Dupixent) + rachat d\'Insmed pour la croissance post-2030.','Fin de brevet Dupixent, coût de l\'acquisition.','Intégration Insmed|Échecs du pipeline|Prix des médicaments US','Échec des actifs clés d\'Insmed'],
+['SRT3.DE','Sartorius','Santé','PEA',5,'','Équipements de bioproduction, reprise du cycle biotech.','Déstockage, dette.','Reprise lente|Dette|Chine','Croissance < 5 % en 2027'],
+['NOVO-B.CO','Novo Nordisk','Santé','PEA*',7,'','Obésité/diabète, la pilule Wegovy décolle, valorisation basse.','Concurrence Lilly, pression sur les prix US.','Lilly (pilule orale)|Prix US|Génériques du sémaglutide','Ventes Wegovy en déclin global'],
+['ENX.PA','Euronext','Finance','PEA',7,'','Infrastructure de marché, synergies, rachats d\'actions.','Volumes de marché, concurrence.','Baisse des volumes|Régulation|Acquisitions','Revenus en baisse'],
+['AMUN.PA','Amundi','Finance','PEA',5,'Gérant de ton ETF socle','Gestion d\'actifs, dividende élevé, ETF.','Pression sur les frais.','Marchés baissiers|Frais|Décollecte','Collecte négative 2 ans'],
+['EDEN.PA','Edenred','Paiements','PEA',4,'','Titres-restaurant, trésorerie rémunérée par les taux hauts.','Réforme des titres-restaurant.','Réforme réglementaire|Baisse des taux|Concurrence','Plafonnement des commissions'],
+['PLX.PA','Pluxee','Paiements','PEA',4,'Doublon thème Edenred','Spin-off de Sodexo, même modèle qu\'Edenred.','Même risque réglementaire.','Régulation|Taux|Exécution','Plafonnement des commissions'],
+['FDJU.PA','FDJ United','Conso','PEA',5,'','Monopole de la loterie, rendement, intégration de Kindred.','Fiscalité des jeux.','Hausse des taxes|Intégration Kindred|Régulation','Hausse fiscale majeure'],
+['INVE-B.ST','Investor AB','Finance','PEA*',7,'','Holding Wallenberg diversifiée (ABB, Atlas Copco, AstraZeneca).','Couronne, décote de holding.','Décote qui s\'élargit|Couronne|Concentration','ANR sous-performant 3 ans'],
+['BOUV.OL','Bouvet','Logiciels','PEA*',4,'','Petite ESN norvégienne rentable, dividende.','Petite cap, couronne.','Liquidité|IA vs services|Change','Marge < 8 %'],
+['NVDA','NVIDIA','Semi-conducteurs','CTO',1,'Déjà détenu + poids lourd MSCI World/Nasdaq','Leader des GPU IA, écosystème CUDA.','Enquêtes, export Chine, volatilité extrême.','Capex IA qui ralentit|Enquêtes|ASIC concurrents','Revenus data center en baisse'],
+['AVGO','Broadcom','Semi-conducteurs','CTO',2,'Poids lourd MSCI World','ASIC IA, réseau, logiciels VMware.','Concentration des clients.','Clients hyperscalers|Dette|Cycle','Perte d\'un client ASIC majeur'],
+['TSM','TSMC ADR','Semi-conducteurs','CTO',4,'Thème semi lourd (TSMC hors MSCI World)','Fonderie incontournable de l\'IA.','Géopolitique de Taïwan.','Taïwan|Tarifs US|Cycle','Marge brute < 50 %'],
+['AMD','AMD','Semi-conducteurs','CTO',2,'Thème semi lourd','GPU IA alternatifs, CPU serveurs.','Volatilité, domination NVIDIA.','Exécution MI-series|Cycle PC|Valorisation','Part de marché IA stagnante'],
+['000660.KS','SK Hynix','Semi-conducteurs','CTO',4,'Thème semi','Mémoire HBM pour l\'IA.','Cycle de la mémoire.','Retournement du cycle|Samsung/Micron|Corée','Prix HBM en baisse'],
+['MRVL','Marvell','Semi-conducteurs','CTO',2,'Thème semi','ASIC sur mesure et optique data center.','Cycle, concentration clients.','Clients|Cycle|Concurrence','Perte d\'un programme ASIC'],
+['SMCI','Super Micro','Semi-conducteurs','CTO',1,'Thème semi','Serveurs IA, forte croissance.','Gouvernance comptable, marges faibles.','Gouvernance|Marges|Concurrence Dell','Nouveau retard de comptes'],
+['6857.T','Advantest','Semi-conducteurs','CTO',3,'Thème semi','Testeurs de puces IA.','Yen, cycle.','Cycle|Yen|Concentration','Commandes en baisse'],
+['NVTS','Navitas','Semi-conducteurs','CTO',1,'Thème semi','Spéculatif : GaN/SiC pour data centers.','Pertes, dilution.','Dilution|Trésorerie|Exécution','Trésorerie < 12 mois'],
+['MSFT','Microsoft','Big Tech','CTO',1,'Poids lourd MSCI World/Nasdaq','Cloud Azure, IA, logiciels.','Capex IA massif.','Retour sur capex IA|Régulation|Valorisation','Croissance Azure < 20 %'],
+['GOOGL','Alphabet A','Big Tech','CTO',1,'Déjà détenu (classe C) + poids lourd','Recherche, Cloud, YouTube, Waymo, TPU.','Antitrust, IA vs recherche.','Antitrust|Cannibalisation de la recherche|Capex','Part de la recherche en baisse'],
+['AMZN','Amazon','Big Tech','CTO',1,'Poids lourd MSCI World','AWS, publicité, commerce.','Capex IA.','AWS|Consommation|Régulation','Croissance AWS < 15 %'],
+['META','Meta','Big Tech','CTO',1,'Poids lourd MSCI World','Publicité, IA, lunettes.','Capex Reality Labs.','Capex|Régulation|Pub cyclique','Utilisateurs en baisse'],
+['AAPL','Apple','Big Tech','CTO',1,'Poids lourd MSCI World','Écosystème, services.','Chine, retard IA.','Chine|Antitrust App Store|Innovation','Services en baisse'],
+['ORCL','Oracle','Big Tech','CTO',3,'Présent MSCI World','Cloud IA (OCI), contrats géants.','Dette massive, dépendance à OpenAI.','Dette|Concentration clients|Exécution','FCF négatif prolongé'],
+['NOW','ServiceNow','Logiciels','CTO',4,'Présent MSCI World','Plateforme de workflows, IA agentique.','Peur de disruption IA des SaaS.','Disruption IA|Valorisation|Sièges','Croissance < 15 %'],
+['PLTR','Palantir','Logiciels','CTO',2,'Présent MSCI World','Logiciels data/IA pour États et entreprises.','Valorisation extrême.','Multiple|Contrats publics|Concurrence','Croissance commerciale US < 30 %'],
+['RDDT','Reddit','Big Tech','CTO',1,'Déjà détenu','Données pour l\'IA, publicité.','Trafic venant de Google, monétisation.','Dépendance à Google|Pub|Volatilité','Utilisateurs actifs en baisse'],
+['V','Visa','Paiements','CTO',5,'Présent MSCI World','Réseau de paiement, marges > 60 %.','Régulation des commissions, stablecoins.','Régulation|Stablecoins|Antitrust','Croissance des volumes < 6 %'],
+['MA','Mastercard','Paiements','CTO',5,'Présent MSCI World','Réseau de paiement, services à valeur ajoutée.','Régulation, stablecoins.','Régulation|Stablecoins|Change','Croissance des volumes < 6 %'],
+['BLK','BlackRock','Finance','CTO',4,'Présent MSCI World','Leader des ETF, actifs privés.','Marchés baissiers.','Marchés|Frais|Intégrations','Décollecte'],
+['SPGI','S&P Global','Finance','CTO',5,'Présent MSCI World','Notations et indices, quasi-monopole.','Cycle des émissions obligataires.','Émissions|Régulation|Scission','Revenus de notation en baisse'],
+['COST','Costco','Conso','CTO',4,'Présent MSCI World','Abonnements, fidélité, défensif.','Valorisation très élevée.','Multiple|Marges|Concurrence','Renouvellement < 90 %'],
+['MCD',"McDonald's",'Conso','CTO',4,'','Franchise et immobilier, défensif.','Consommateur US modeste.','Trafic|Médicaments GLP-1|Coûts','Ventes comparables négatives'],
+['KO','Coca-Cola','Agro','CTO',3,'Proche de l\'agro (Danone, Nestlé)','Marque, distribution, dividende.','Croissance faible, GLP-1.','GLP-1|Change|Valorisation','Volumes en baisse'],
+['EL','Estée Lauder','Luxe','CTO',3,'Proche de L\'Oréal','Redressement, forte décote.','Chine, travel retail.','Chine|Exécution|Dette','Pas de croissance en 2027'],
+['NFLX','Netflix','Conso','CTO',4,'Présent MSCI World','Leader du streaming, publicité.','Valorisation.','Concurrence|Contenus|Multiple','Abonnés en baisse'],
+['SPOT','Spotify','Conso','CTO',5,'','Hausses de prix, marges en progression.','Labels, IA.','Labels|Concurrence|Prix','Marge brute < 30 %'],
+['TTWO','Take-Two','Conso','CTO',4,'','GTA VI, franchise majeure.','Report de lancement.','Report de GTA VI|Coûts|Dépendance à un titre','Échec commercial de GTA VI'],
+['7974.T','Nintendo','Conso','CTO',6,'','Switch 2, licences uniques, trésorerie nette.','Yen, cycle console.','Cycle|Yen|Ventes Switch 2','Ventes Switch 2 sous objectif'],
+['ABNB','Airbnb','Conso','CTO',4,'','Plateforme sans actifs, FCF élevé.','Régulation des locations.','Régulation|Concurrence|Croissance','Nuits réservées en baisse'],
+['BKNG','Booking','Conso','CTO',5,'Présent MSCI World','Leader du voyage en ligne, rachats.','Agents IA qui court-circuitent.','IA agentique|Google|Voyage cyclique','Nuits en baisse'],
+['UBER','Uber','Mobilité','CTO',4,'Présent MSCI World','Réseau mobilité/livraison, FCF.','Robotaxis.','Robotaxis|Régulation|Concurrence','Croissance des courses < 10 %'],
+['LYFT','Lyft','Mobilité','CTO',2,'Doublon Uber','Numéro 2 US, moins cher.','Taille, robotaxis.','Échelle|Robotaxis|Prix','Pertes de parts de marché'],
+['TSLA','Tesla','Mobilité','CTO',2,'Présent MSCI World/Nasdaq','Optionnalité robotaxi et robots.','Ventes auto en baisse, valorisation.','Ventes|Valorisation|Gouvernance','Marge auto < 10 %'],
+['1211.HK','BYD','Mobilité','CTO',5,'','Leader chinois des VE, intégration verticale.','Guerre des prix, tarifs UE.','Prix|Tarifs|Géopolitique','Marge brute < 15 %'],
+['BABA','Alibaba ADR','Big Tech','CTO',5,'','Cloud IA chinois, décote.','Géopolitique, régulation chinoise.','Chine|Radiation des ADR|Concurrence','Cloud en décroissance'],
+['BMI','Badger Meter','Industrie','CTO',6,'','Compteurs d\'eau connectés, niche rentable.','Multiple élevé, construction.','Multiple|Cycle|Concurrence','Croissance < 5 %'],
+['ASTS','AST SpaceMobile','Industrie','CTO',1,'','Spéculatif : satellite vers smartphone.','Trésorerie, exécution.','Dilution|Lancements|Starlink','Retard de déploiement'],
+['MEDI.OL','Medistim','Santé','PEA*',6,'','Niche de la chirurgie cardiaque, sans dette.','Petite cap, couronne.','Liquidité|Adoption|Change','Croissance < 5 %'],
+['NESN.SW','Nestlé','Agro','CTO',1,'Doublon agro (Savencia, Danone)','Défensif, marques, dividende.','Restructuration, croissance faible.','Volumes|Dette|Franc suisse','Croissance organique < 2 %'],
+['SAVE.PA','Savencia','Agro','PEA',1,'Déjà détenu via PEE + employeur','Fromager familial décoté.','Prix du lait.','Concentration employeur|Lait|Liquidité','—'],
+['SPACEX','SpaceX','Non coté','—',null,'','Suivi manuel (valorisation secondaire). Vérifier le statut de cotation.','—','Accès|Liquidité|Valorisation','—'],
+['ANTHROPIC','Anthropic','Non coté','—',null,'','Suivi manuel (valorisation secondaire).','—','Accès|Liquidité|Valorisation','—'],
+['DCAM.PA','Amundi PEA Monde','ETF & couverture','PEA',null,'Socle actuel (benchmark)','Benchmark du portefeuille.','—','—|—|—','—'],
+['IGLN.L','iShares Physical Gold','ETF & couverture','CTO',6,'','Couverture or (non éligible PEA).','Or déjà très haut.','Or en baisse|Dollar|Aucun rendement','—'],
+['GOLD.MI','Amundi Physical Gold','ETF & couverture','CTO',6,'Doublon IGLN','ETC or en euros (non éligible PEA).','Or déjà très haut.','Or en baisse|Dollar|Aucun rendement','—'],
+['X13E.MI','Euro Gov Bond 1-3Y','ETF & couverture','AV',7,'','Obligations courtes : cohérent pour l\'apport immobilier 2027-28 (via AV/CTO).','Gain limité si les taux baissent peu.','Inflation|Taux|Change nul','—'],
+['BTC-EUR','Bitcoin','Crypto','Crypto',3,'Déjà détenu (Finary + Trade Republic)','Réserve de valeur numérique, offre plafonnée, ETF spot.','Taux réels élevés, mauvais mois de novembre.','Régulation|Volatilité extrême|Liquidité macro','Cassure durable sous le plus-bas 52 semaines'],
+['ETH-EUR','Ethereum','Crypto','Crypto',2,'Déjà détenu (Trade Republic)','Plateforme de smart contracts, staking, ETF.','Concurrence des blockchains rapides, frais en baisse.','Concurrence Solana|Régulation du staking|Volatilité','Part DeFi/stablecoins en recul'],
+['SOL-EUR','Solana','Crypto','Crypto',1,'Déjà détenu (Trade Republic)','Blockchain rapide, forte activité.','Bêta élevé au marché crypto.','Pannes réseau|Concentration|Volatilité','Activité on-chain en chute'],
+['XRP-EUR','XRP','Crypto','Crypto',2,'','Paiements transfrontaliers, ETF.','Spéculatif.','Adoption bancaire faible|Concentration Ripple|Volatilité','—'],
+['BNB-EUR','BNB','Crypto','Crypto',1,'','Jeton de l\'écosystème Binance.','Risque réglementaire Binance.','Régulation Binance|Concentration|Volatilité','—'],
+['LINK-EUR','Chainlink','Crypto','Crypto',2,'','Oracles, tokenisation d\'actifs réels.','Captation de valeur par le jeton.','Captation de valeur|Concurrence|Volatilité','—'],
+['ADA-EUR','Cardano','Crypto','Crypto',1,'','Blockchain historique, communauté forte.','Usage faible.','Faible adoption|Concurrence|Volatilité','—'],
+['DOGE-EUR','Dogecoin','Crypto','Crypto',0,'','Mème, purement spéculatif.','—','Aucun fondamental|Inflation monétaire|Volatilité','—']
+].map(a=>({t:a[0],n:a[1],s:a[2],e:a[3],i:a[4],o:a[5],th:a[6],mh:a[7],r:a[8].split('|'),inv:a[9]}));
+
+// Instantané complet du 24/11/2026 ~20h30 : Yahoo Finance (actions, ETF, devises) + CoinGecko (crypto)
+const SNAP={
+'UMG.AS':{"p":16.915,"prev":16.78,"ma50":15.8469,"ma200":17.3386,"hi52":22.76,"lo52":13.92,"rsi":54,"atr":0.437321,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'RACE.MI':{"p":361.2,"prev":365.35,"ma50":358.429,"ma200":326.996,"hi52":390.7,"lo52":269,"rsi":47,"atr":8.87474,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'EL.PA':{"p":175.15,"prev":175,"ma50":163.827,"ma200":177.539,"hi52":317,"lo52":138.3,"rsi":49,"atr":5.25984,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'RI.PA':{"p":72.08,"prev":71.22,"ma50":65.7212,"ma200":66.2523,"hi52":87.66,"lo52":57.86,"rsi":62,"atr":1.45924,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'BN.PA':{"p":68.9,"prev":67.86,"ma50":63.1312,"ma200":66.5309,"hi52":78.68,"lo52":57.26,"rsi":62,"atr":1.29343,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'MC.PA':{"p":394.7,"prev":388.8,"ma50":393.933,"ma200":456.766,"hi52":654.3,"lo52":375.65,"rsi":49,"atr":10.1725,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'KER.PA':{"p":180.04,"prev":178.42,"ma50":202.463,"ma200":242.423,"hi52":320.5,"lo52":171.7,"rsi":40,"atr":6.29571,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'OR.PA':{"p":440.9,"prev":438.25,"ma50":411.246,"ma200":383.57,"hi52":455.75,"lo52":338.85,"rsi":58,"atr":7.72946,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'ADYEN.AS':{"p":837.2,"prev":823,"ma50":878.732,"ma200":910.033,"hi52":1485,"lo52":772.4,"rsi":44,"atr":31.2562,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'PLNW.PA':{"p":24.85,"prev":24.3,"ma50":25.219,"ma200":20.7208,"hi52":28.1,"lo52":13.7,"rsi":47,"atr":0.735315,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'CAP.PA':{"p":119.95,"prev":117.2,"ma50":117.363,"ma200":105.397,"hi52":153.05,"lo52":85.62,"rsi":48,"atr":3.86365,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'ASML.AS':{"p":1201.2,"prev":1272.2,"ma50":1445.34,"ma200":1401.33,"hi52":1741,"lo52":837.1,"rsi":38,"atr":70.1998,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'SAP.DE':{"p":190.08,"prev":186.34,"ma50":198.011,"ma200":167.362,"hi52":219.65,"lo52":127.5,"rsi":38,"atr":6.14674,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'WKL.AS':{"p":86.5,"prev":83.88,"ma50":79.8608,"ma200":68.4521,"hi52":93.38,"lo52":54.64,"rsi":53,"atr":2.49673,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'DSY.PA':{"p":22.36,"prev":22.14,"ma50":23.0752,"ma200":20.1446,"hi52":26.39,"lo52":15.825,"rsi":37,"atr":0.749822,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'UBI.PA':{"p":3.248,"prev":3.19,"ma50":4.69948,"ma200":4.85924,"hi52":8.094,"lo52":2.95,"rsi":25,"atr":0.28507,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'GTT.PA':{"p":182.5,"prev":184.5,"ma50":201.82,"ma200":199.918,"hi52":227,"lo52":153.8,"rsi":39,"atr":4.56555,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'SU.PA':{"p":226.1,"prev":235.85,"ma50":256.864,"ma200":268.008,"hi52":312.3,"lo52":221.25,"rsi":38,"atr":8.29604,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'LR.PA':{"p":125.35,"prev":132.75,"ma50":134.718,"ma200":140.883,"hi52":166.95,"lo52":121.95,"rsi":41,"atr":5.17433,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'HO.PA':{"p":229.7,"prev":226.8,"ma50":228.842,"ma200":238.696,"hi52":274.2,"lo52":211.9,"rsi":52,"atr":5.39632,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'SAF.PA':{"p":299.1,"prev":302.5,"ma50":310.228,"ma200":315.96,"hi52":366.5,"lo52":262.6,"rsi":47,"atr":9.22084,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'AI.PA':{"p":188.12,"prev":187.66,"ma50":176.798,"ma200":168.728,"hi52":194.7,"lo52":140.782,"rsi":61,"atr":2.6519,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'RHM.DE':{"p":734.5,"prev":725.2,"ma50":934.93,"ma200":1191.03,"hi52":1966,"lo52":692.3,"rsi":31,"atr":39.6702,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'AMUN.PA':{"p":91.55,"prev":92.65,"ma50":91.354,"ma200":86.0995,"hi52":98.3,"lo52":66.45,"rsi":44,"atr":1.77024,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'MTU.PA':{"p":19,"prev":19.2,"ma50":20.2796,"ma200":20.7624,"hi52":24.35,"lo52":17.44,"rsi":35,"atr":0.549215,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'ENX.PA':{"p":168.9,"prev":164.8,"ma50":166.308,"ma200":151.16,"hi52":178.5,"lo52":110,"rsi":52,"atr":3.59222,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'NOVO-B.CO':{"p":274.65,"prev":266.35,"ma50":263.117,"ma200":279.472,"hi52":409.95,"lo52":224.25,"rsi":55,"atr":7.51936,"c":"DKK","d":"24/11 ~20h30 (Yahoo)"},
+'SRT3.DE':{"p":292.8,"prev":293.8,"ma50":272.506,"ma200":239.275,"hi52":305.4,"lo52":198.5,"rsi":57,"atr":8.49258,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'SAN.PA':{"p":93.58,"prev":85.26,"ma50":77.354,"ma200":77.1096,"hi52":94.3,"lo52":69.75,"rsi":77,"atr":2.32719,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'RNO.PA':{"p":26.76,"prev":27.19,"ma50":27.1218,"ma200":28.2574,"hi52":37.97,"lo52":24.38,"rsi":45,"atr":0.891168,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'TTE.PA':{"p":77.68,"prev":77.49,"ma50":79.8222,"ma200":75.7102,"hi52":85.94,"lo52":53.29,"rsi":40,"atr":1.68923,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'PLX.PA':{"p":12.36,"prev":11.95,"ma50":13.6934,"ma200":12.7633,"hi52":16.37,"lo52":9.905,"rsi":43,"atr":0.383788,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'TSM':{"p":348.44,"prev":363.6,"ma50":419.755,"ma200":403.603,"hi52":487.47,"lo52":273.08,"rsi":40,"atr":22.6582,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'NVDA':{"p":152.69,"prev":165.05,"ma50":204.893,"ma200":203.057,"hi52":243.37,"lo52":124.5,"rsi":39,"atr":13.3194,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'BOUV.OL':{"p":49.75,"prev":50.4,"ma50":49.212,"ma200":48.2093,"hi52":65.2,"lo52":42.15,"rsi":46,"atr":1.59647,"c":"NOK","d":"24/11 ~20h30 (Yahoo)"},
+'EDEN.PA':{"p":25.48,"prev":24.8,"ma50":26.6474,"ma200":23.8409,"hi52":30.85,"lo52":15.23,"rsi":49,"atr":0.844924,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'FDJU.PA':{"p":21.87,"prev":21.33,"ma50":21.3392,"ma200":22.9233,"hi52":26.75,"lo52":19.45,"rsi":59,"atr":0.354021,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'INVE-B.ST':{"p":414.05,"prev":419.2,"ma50":417.51,"ma200":392.253,"hi52":439.6,"lo52":314,"rsi":42,"atr":6.96864,"c":"SEK","d":"24/11 ~20h30 (Yahoo)"},
+'AVGO':{"p":304.075,"prev":313.55,"ma50":341.384,"ma200":367.522,"hi52":495,"lo52":289.77,"rsi":41,"atr":19.7154,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'NVTS':{"p":6.55,"prev":7.33,"ma50":9.7151,"ma200":13.2138,"hi52":34.17,"lo52":6.03,"rsi":38,"atr":0.930366,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'GOOGL':{"p":278.17,"prev":282.1,"ma50":319.619,"ma200":336.539,"hi52":408.61,"lo52":264.22,"rsi":39,"atr":11.5063,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'SMCI':{"p":22.805,"prev":24.53,"ma50":34.4915,"ma200":32.2682,"hi52":51.4,"lo52":19.48,"rsi":35,"atr":2.5669,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'AMD':{"p":416.82,"prev":453.46,"ma50":550.551,"ma200":432.015,"hi52":658.52,"lo52":188.22,"rsi":39,"atr":46.794,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'MRVL':{"p":132.54,"prev":144.74,"ma50":217.008,"ma200":189.169,"hi52":329.88,"lo52":70.69,"rsi":35,"atr":16.8687,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'000660.KS':{"p":1158000,"prev":1113000,"ma50":1476820,"ma200":1530420,"hi52":2987000,"lo52":501000,"rsi":37,"atr":96859.2,"c":"KRW","d":"24/11 ~20h30 (Yahoo)"},
+'MSFT':{"p":494.21,"prev":492.5,"ma50":519.52,"ma200":444.492,"hi52":559.15,"lo52":349.2,"rsi":40,"atr":16.7355,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'6857.T':{"p":27275,"prev":27045,"ma50":33413.8,"ma200":29482.5,"hi52":41990,"lo52":18460,"rsi":33,"atr":2539.87,"c":"JPY","d":"24/11 ~20h30 (Yahoo)"},
+'AMZN':{"p":252.07,"prev":255.39,"ma50":255.142,"ma200":245.593,"hi52":287.2,"lo52":196,"rsi":46,"atr":9.99364,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'META':{"p":592.155,"prev":597.6,"ma50":673.732,"ma200":627.847,"hi52":779.82,"lo52":520.26,"rsi":41,"atr":23.9734,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'RDDT':{"p":90.38,"prev":88.76,"ma50":130.252,"ma200":151.305,"hi52":263.5,"lo52":84.595,"rsi":34,"atr":7.10636,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'PLTR':{"p":161.35,"prev":159.36,"ma50":182.757,"ma200":154.177,"hi52":212.94,"lo52":106.37,"rsi":43,"atr":9.41969,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'V':{"p":415.58,"prev":409.4,"ma50":396.12,"ma200":349.999,"hi52":442.23,"lo52":293.89,"rsi":54,"atr":9.01847,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'NOW':{"p":91.42,"prev":91.72,"ma50":125.857,"ma200":113.139,"hi52":175,"lo52":81.24,"rsi":30,"atr":5.76702,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'ORCL':{"p":109.055,"prev":113.68,"ma50":130.891,"ma200":152.716,"hi52":250.25,"lo52":100.25,"rsi":41,"atr":8.39164,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'AAPL':{"p":352.52,"prev":349.08,"ma50":342.551,"ma200":303.985,"hi52":360.83,"lo52":243.42,"rsi":56,"atr":8.29422,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'MA':{"p":646.34,"prev":635.48,"ma50":609.751,"ma200":545.302,"hi52":681.99,"lo52":464.52,"rsi":55,"atr":14.201,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'BLK':{"p":1141.88,"prev":1144.52,"ma50":1123.66,"ma200":1069.63,"hi52":1242.12,"lo52":917.39,"rsi":47,"atr":33.9604,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'SPGI':{"p":456.79,"prev":451.96,"ma50":432.922,"ma200":415.514,"hi52":522.469,"lo52":361.031,"rsi":53,"atr":11.1287,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'COST':{"p":1088.94,"prev":1097.91,"ma50":994.063,"ma200":979.936,"hi52":1123.67,"lo52":844.06,"rsi":63,"atr":19.7187,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'EL':{"p":107.18,"prev":103.75,"ma50":102.53,"ma200":91.0794,"hi52":121.64,"lo52":66.22,"rsi":52,"atr":4.22932,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'KO':{"p":97.775,"prev":95.88,"ma50":92.1187,"ma200":84.0672,"hi52":100.56,"lo52":67.27,"rsi":59,"atr":1.8885,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'NFLX':{"p":59.055,"prev":58.1,"ma50":66.5829,"ma200":79.7064,"hi52":109.73,"lo52":56.56,"rsi":37,"atr":1.98078,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'MCD':{"p":280.27,"prev":276.38,"ma50":253.168,"ma200":279.814,"hi52":341.75,"lo52":229.2,"rsi":67,"atr":6.15539,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'SPOT':{"p":600.085,"prev":585.74,"ma50":551.163,"ma200":507.224,"hi52":635,"lo52":405,"rsi":56,"atr":20.8682,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'ABNB':{"p":174.15,"prev":173.96,"ma50":169.833,"ma200":150.936,"hi52":197.87,"lo52":113.38,"rsi":49,"atr":6.5428,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'TTWO':{"p":222.37,"prev":209.36,"ma50":207.408,"ma200":218.597,"hi52":265.94,"lo52":183.86,"rsi":57,"atr":12.5737,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'UBER':{"p":64.96,"prev":64.07,"ma50":68.6644,"ma200":72.305,"hi52":92.78,"lo52":63.29,"rsi":40,"atr":2.41323,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'LYFT':{"p":16.19,"prev":16.22,"ma50":16.3119,"ma200":15.0741,"hi52":23.33,"lo52":12.46,"rsi":45,"atr":0.81394,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'TSLA':{"p":383.825,"prev":385.46,"ma50":376.71,"ma200":381.367,"hi52":498.83,"lo52":297.38,"rsi":52,"atr":19.0057,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'BKNG':{"p":146.525,"prev":144.94,"ma50":158.807,"ma200":173.397,"hi52":220.806,"lo52":143.86,"rsi":37,"atr":5.90279,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'7974.T':{"p":8656,"prev":9306,"ma50":8359.3,"ma200":8193.18,"hi52":13435,"lo52":6544,"rsi":55,"atr":336.312,"c":"JPY","d":"24/11 ~20h30 (Yahoo)"},
+'ASTS':{"p":23.923,"prev":25.67,"ma50":44.7157,"ma200":70.8546,"hi52":133.86,"lo52":22.52,"rsi":31,"atr":3.7541,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'BABA':{"p":84.34,"prev":86.04,"ma50":103.366,"ma200":120.056,"hi52":181.1,"lo52":80.96,"rsi":31,"atr":3.76936,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'1211.HK':{"p":60.3,"prev":62.35,"ma50":72.937,"ma200":88.5148,"hi52":113.4,"lo52":59.7,"rsi":26,"atr":2.43037,"c":"HKD","d":"24/11 ~20h30 (Yahoo)"},
+'MEDI.OL':{"p":326,"prev":323,"ma50":285.84,"ma200":241.785,"hi52":330,"lo52":186.5,"rsi":72,"atr":9.56795,"c":"NOK","d":"24/11 ~20h30 (Yahoo)"},
+'DCAM.PA':{"p":6.049,"prev":6.148,"ma50":6.2803,"ma200":5.95837,"hi52":6.425,"lo52":5.2,"rsi":39,"atr":0.103236,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'BMI':{"p":165.055,"prev":163.1,"ma50":141.461,"ma200":138.532,"hi52":186.76,"lo52":112.09,"rsi":64,"atr":6.74632,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'NESN.SW':{"p":86.28,"prev":84.88,"ma50":81.3602,"ma200":80.2548,"hi52":88.43,"lo52":70.29,"rsi":58,"atr":1.39091,"c":"CHF","d":"24/11 ~20h30 (Yahoo)"},
+'SAVE.PA':{"p":56,"prev":56,"ma50":56.54,"ma200":62.122,"hi52":74.4,"lo52":54.2,"rsi":43,"atr":1.02843,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'IGLN.L':{"p":69.1775,"prev":71.2425,"ma50":78.8249,"ma200":85.4944,"hi52":107.698,"lo52":68.395,"rsi":31,"atr":1.69375,"c":"USD","d":"24/11 ~20h30 (Yahoo)"},
+'X13E.MI':{"p":174.61,"prev":174.59,"ma50":173.907,"ma200":173.877,"hi52":177.78,"lo52":170.46,"rsi":66,"atr":0.319898,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'GOLD.MI':{"p":128.87,"prev":133.52,"ma50":143.589,"ma200":151.487,"hi52":183.85,"lo52":127.2,"rsi":33,"atr":2.91319,"c":"EUR","d":"24/11 ~20h30 (Yahoo)"},
+'BTC-EUR':{"p":59813,"prev":61393.804515,"ma50":74984.375,"ma200":72234,"hi52":95593,"lo52":58566,"rsi":23,"atr":1005.434801,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'ETH-EUR':{"p":1677.25,"prev":1736.385023,"ma50":2176.96875,"ma200":2117.186364,"hi52":3319.2,"lo52":1569.8,"rsi":23,"atr":31.643242,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'SOL-EUR':{"p":69.25,"prev":73.071354,"ma50":91.738125,"ma200":88.339242,"hi52":144.83,"lo52":63.63,"rsi":26,"atr":1.826243,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'XRP-EUR':{"p":0.920534,"prev":0.948219,"ma50":1.18765,"ma200":1.236609,"hi52":2.3027,"lo52":0.916,"rsi":26,"atr":0.022786,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'BNB-EUR':{"p":549.15,"prev":559.358972,"ma50":679.4,"ma200":655.984848,"hi52":930.5,"lo52":545.9,"rsi":25,"atr":10.962612,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'LINK-EUR':{"p":8.87,"prev":9.022422,"ma50":10.960875,"ma200":10.086121,"hi52":14.667,"lo52":7.191,"rsi":30,"atr":0.23694,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'ADA-EUR':{"p":0.14481,"prev":0.149066,"ma50":0.192463,"ma200":0.199983,"hi52":0.4702,"lo52":0.1426,"rsi":28,"atr":0.004613,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
+'DOGE-EUR':{"p":0.055348,"prev":0.056962,"ma50":0.072207,"ma200":0.082042,"hi52":0.15271,"lo52":0.05521,"rsi":25,"atr":0.001547,"c":"USD","d":"24/11 20h30 (CoinGecko)"}
+};
+const CR={'BTC-EUR':['BTC','bitcoin'],'ETH-EUR':['ETH','ethereum'],'SOL-EUR':['SOL','solana'],'XRP-EUR':['XRP','ripple'],'BNB-EUR':['BNB','binancecoin'],'LINK-EUR':['LINK','chainlink'],'ADA-EUR':['ADA','cardano'],'DOGE-EUR':['DOGE','dogecoin']};
+const BN='https://data-api.binance.vision';
+const FX0={EUR:1,USD:1.097,CHF:0.9161,DKK:7.4742,NOK:10.736,SEK:11.2216,JPY:174.636,KRW:1472.1,HKD:8.5994,GBP:0.8361}; // taux Yahoo du 24/11 ~20h30 // repli EUR/USD du 24/11 ; autres devises seulement via le flux live
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(v,d)=>{if(v==null||!isFinite(v))return '—';if(d==null)d=Math.abs(v)<1&&v!==0?4:2;return v.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d})};
+const pct=v=>v==null||!isFinite(v)?'—':(v>0?'+':'')+fmt(v,1)+' %';
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+let LIVE=store.get('ev_live',{}), FX=Object.assign({},FX0,store.get('ev_fx',{})), FV=store.get('ev_fv',{}), FH=store.get('ev_fh',{});
+let sortK='ev',sortDir=-1,src='snap';
+
+const PUB=[u=>'https://corsproxy.io/?url='+encodeURIComponent(u),u=>'https://proxy.corsfix.com/?'+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u),u=>u];
+const proxies=()=>{const w=($('pxy')?.value||'').trim().replace(/\/+$/,'');return w?[u=>w+'/?url='+encodeURIComponent(u),...PUB]:PUB};
+let PROX=PUB;
+let goodProxy=0;
+async function getJSON(u){
+  PROX=proxies();if(goodProxy>=PROX.length)goodProxy=0;
+  for(let k=0;k<PROX.length;k++){const i=(goodProxy+k)%PROX.length;
+    try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),9000);
+      const r=await fetch(PROX[i](u),{signal:ctl.signal});clearTimeout(to);
+      if(!r.ok)continue;const j=await r.json();goodProxy=i;return j}catch(e){}}
+  throw new Error('bloqué');
+}
+const chartURL=(t,r)=>'https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(t)+'?range='+r+'&interval=1d';
+
+function indic(res){
+  const m=res.meta,q=res.indicators.quote[0];const C=[],H=[],L=[];
+  for(let k=0;k<q.close.length;k++)if(q.close[k]!=null&&q.high[k]!=null&&q.low[k]!=null){C.push(q.close[k]);H.push(q.high[k]);L.push(q.low[k])}
+  let c=m.currency||'EUR',div=1;if(c==='GBp'||c==='GBX'){c='GBP';div=100}
+  return calc(C,H,L,m.regularMarketPrice??C[C.length-1],c,div);
+}
+function calc(C,H,L,p0,c,div){
+  if(C.length<20)return null;
+  const avg=(a,n)=>{const s=a.slice(-n);return s.reduce((x,y)=>x+y,0)/s.length};
+  let g=0,l=0;for(let k=1;k<=14;k++){const d=C[k]-C[k-1];d>0?g+=d:l-=d}g/=14;l/=14;
+  for(let k=15;k<C.length;k++){const d=C[k]-C[k-1];g=(g*13+Math.max(d,0))/14;l=(l*13+Math.max(-d,0))/14}
+  const rsi=l===0?100:100-100/(1+g/l);
+  const TR=[];for(let k=1;k<C.length;k++)TR.push(Math.max(H[k]-L[k],Math.abs(H[k]-C[k-1]),Math.abs(L[k]-C[k-1])));
+  let atr=TR.slice(0,14).reduce((x,y)=>x+y,0)/14;for(let k=14;k<TR.length;k++)atr=(atr*13+TR[k])/14;
+  const p=p0/div;
+  return {p,prev:C[C.length-2]/div,ma50:avg(C,50)/div,ma200:avg(C,200)/div,rsi,atr:atr/div,hi52:Math.max(...H)/div,lo52:Math.min(...L)/div,c,ts:Date.now()};
+}
+
+function compute(x){
+  const L=LIVE[x.t],S=SNAP[x.t];let q=null,from='';
+  if(L){q=L;from=L.robot?'robot GitHub '+new Date(L.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):Date.now()-L.ts<15*60e3?'live':'cache '+new Date(L.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+  else if(S){q=Object.assign({c:'EUR'},S);from='instantané '+S.d}
+  const o={...x,from};
+  if(!q){o.st='na';o.ev=null;return o}
+  const fx=FX[q.c];if(!fx){o.st='na';o.ev=null;o.from+=' (devise '+q.c+' non convertie)';return o}
+  const cv=v=>v==null?null:v/fx;
+  o.pe=cv(q.p);o.chg=q.prev?(q.p/q.prev-1)*100:null;o.ma50=cv(q.ma50);o.ma200=cv(q.ma200);o.rsi=q.rsi??null;
+  o.atr=cv(q.atr)??o.pe*0.02;o.hi52=cv(q.hi52);o.lo52=cv(q.lo52);o.approx=!L&&!q.ma50;
+  const P=o.pe;
+  const sup=q.sup?cv(q.sup):null;
+  o.p1=o.ma50&&P>o.ma50?o.ma50:o.ma200&&P>o.ma200?o.ma200:sup&&P>sup?sup:P-o.atr;
+  const fv=FV[x.t];o.fv=fv||null;
+  o.p2=fv?fv*0.825:Math.min(o.p1,o.ma200||o.p1)-1.5*o.atr;
+  o.p3=Math.min(o.lo52||Infinity,o.p2*0.9);
+  o.d1=(P/o.p1-1)*100;
+  o.st=(P<=o.p1||(o.rsi!=null&&o.rsi<30))?'go':o.d1<=5?'near':'no';
+  if(x.i==null){o.ev=null}else{
+    const dd=o.hi52?Math.min(Math.max((1-P/o.hi52)/0.4,0),1):0.3;
+    const rs=o.rsi==null?0.5:Math.min(Math.max((70-o.rsi)/40,0),1);
+    const pr=Math.min(Math.max(1-o.d1/20,0),1);
+    o.ev=Math.round(100*(0.4*x.i/10+0.25*dd+0.2*rs+0.15*pr));
+  }
+  const f=FH[x.t];if(f){o.per=f.pe;o.dy=f.dy}
+  return o;
+}
+
+const ST={go:['🟢 Fenêtre de tir','b-go'],near:['🟡 Proche < 5 %','b-near'],no:['🔴 Trop cher','b-no'],na:['⚪ Sans données','b-na']};
+const envLbl=e=>e==='PEA*'?'PEA*':e;
+function size(o){
+  const cash=+$('cash').value||0,lp=(+$('lineP').value||10)/100;if(!cash||!o.pe)return null;
+  const B=cash*lp,frac=o.e==='CTO'||o.e==='Crypto',m=o.e==='Crypto'?1e5:100;
+  return [[o.p1,0.3],[o.p2,0.4],[o.p3,0.3]].map(([p,w])=>{const a=B*w;const n=frac?Math.floor(a/p*m)/m:Math.floor(a/p);return {a,n,cost:n*p}});
+}
+
+function render(){
+  const rows=D.map(compute);
+  const fE=$('fEnv').value,fS=$('fSec').value,fT=$('fSt').value,fQ=$('fQ').value.trim().toLowerCase(),fD=$('fDup').checked;
+  const vis=rows.filter(o=>(!fE||o.e.startsWith(fE))&&(!fS||o.s===fS)&&(!fT||o.st===fT)&&(!fQ||(o.n+' '+o.t).toLowerCase().includes(fQ))&&(!fD||!o.o));
+  vis.sort((a,b)=>{const A=a[sortK],B=b[sortK];if(A==null)return 1;if(B==null)return -1;return (A>B?1:A<B?-1:0)*sortDir});
+  $('tb').innerHTML=vis.map(o=>`<tr class="row" data-t="${esc(o.t)}"><td><b>${esc(o.n)}</b></td><td class="hide-s num">${esc(o.t)}</td><td class="r">${fmt(o.pe)}${o.approx&&o.pe?'<span class="note">*</span>':''}</td><td class="r ${o.chg>0?'pos':o.chg<0?'neg':''}">${pct(o.chg)}</td><td class="r">${pct(o.d1)}</td><td class="r hide-s">${fmt(o.rsi,0)}</td><td>${esc(envLbl(o.e))}</td><td class="r"><b>${o.ev??'—'}</b></td><td><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span></td><td>${o.o?`<span class="badge b-dup" title="${esc(o.o)}">⚠ ${esc(o.o.split(' ')[0]+' '+(o.o.split(' ')[1]||''))}</span>`:''}</td></tr>`).join('')||'<tr><td colspan="10" class="note">Aucune ligne pour ces filtres.</td></tr>';
+  const top=rows.filter(o=>o.ev!=null&&o.pe).sort((a,b)=>b.ev-a.ev).slice(0,10);
+  $('top').innerHTML=top.map((o,k)=>{const sz=size(o);return `<div class="card" data-t="${esc(o.t)}"><div class="rk">#${k+1} · ${esc(envLbl(o.e))} · ${esc(o.s)}</div><b>${esc(o.n)}</b><div class="big num">${fmt(o.pe)} €</div><div class="note">P1 ${fmt(o.p1)} € (${pct(o.d1)}) · EV+ <b>${o.ev}</b></div><div style="margin-top:6px"><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span></div>${sz?`<div class="note" style="margin-top:6px">${sz.every(z=>!z.n)?'Budget de ligne trop faible pour 1 action entière':sz.map((z,j)=>'P'+(j+1)+' : '+fmt(z.n,o.e==='Crypto'?5:o.e==='CTO'?2:0)).join(' · ')+' titres'}</div>`:''}</div>`}).join('')||'<p class="note">Pas encore de cours. Lance « Rafraîchir ».</p>';
+}
+
+function sheet(t){
+  const o=compute(D.find(x=>x.t===t));const sz=size(o);const cto=o.e==='CTO';
+  $('sheetIn').innerHTML=`<button id="close" style="float:right">Fermer</button>
+  <div class="rk">${esc(o.t)} · ${esc(o.s)} · ${esc(envLbl(o.e))}</div><h2 style="font-size:28px;margin:4px 0">${esc(o.n)}</h2>
+  <div class="big num" style="font-size:26px">${fmt(o.pe)} € <span class="${o.chg>0?'pos':'neg'}" style="font-size:16px">${pct(o.chg)}</span></div>
+  <div class="note">Source : ${esc(o.from||'aucune')}${o.approx?' — indicateurs partiels, paliers approximatifs':''}</div>
+  <p><span class="badge ${ST[o.st][1]}">${ST[o.st][0]}</span> ${o.ev!=null?'Score EV+ <b>'+o.ev+'</b> · Impact portefeuille <b>'+o.i+'/10</b>':''}</p>
+  ${o.o?`<p><span class="badge b-dup">⚠ ${esc(o.o)}</span></p>`:''}
+  <div class="grid3">${[['P1 tactique',o.p1,'30 %'],['P2 cœur EV+',o.p2,'40 %'],['P3 capitulation',o.p3,'30 %']].map(([l,v,w],j)=>`<div class="tier"><div class="rk">${l} · ${w}</div><div class="big num">${fmt(v)} €</div>${sz?`<div class="note">${fmt(sz[j].n,o.e==='Crypto'?5:cto?2:0)} titres ≈ ${fmt(sz[j].cost,0)} €</div>`:''}</div>`).join('')}</div>
+  ${sz?'':'<p class="note">Saisis ton cash disponible en haut pour le nombre de titres par palier.</p>'}
+  <div class="kv"><div><span>MM50</span>${fmt(o.ma50)}</div><div><span>MM200</span>${fmt(o.ma200)}</div><div><span>RSI 14</span>${fmt(o.rsi,0)}</div><div><span>ATR 14</span>${fmt(o.atr)}</div><div><span>Plus-haut 52 s.</span>${fmt(o.hi52)} (${pct(o.hi52?(o.pe/o.hi52-1)*100:null)})</div><div><span>Plus-bas 52 s.</span>${fmt(o.lo52)}</div><div><span>PER (Finnhub)</span>${fmt(o.per,1)}</div><div><span>Rendement</span>${o.dy!=null?fmt(o.dy,2)+' %':'—'}</div></div>
+  <h2 style="margin-top:16px">Thèse micro</h2><p>${esc(o.th)}</p>
+  <h2>Vents contraires macro</h2><p>${esc(o.mh)}</p>
+  <h2>3 risques clés</h2><ul>${o.r.map(r=>'<li>'+esc(r)+'</li>').join('')}</ul>
+  <p><b>Seuil d'invalidation :</b> ${esc(o.inv)}</p>
+  ${cto?'<p class="note">CTO : plus-values et dividendes soumis à la flat tax de 30 % et au risque de change.</p>':''}
+  ${o.e==='Crypto'?'<p class="note">Crypto : plus-values imposées à 30 % à la cession vers l\'euro. Rappel de ta règle : plafond de 5 % du patrimoine.</p>':''}
+  ${o.e==='PEA*'?'<p class="note">PEA* : titre de l\'EEE éligible au PEA, à condition que ton courtier PEA donne accès à cette place de cotation.</p>':''}
+  <label style="margin-top:10px">Ma valeur intrinsèque (€) — remplace le P2 technique par 82,5 % de cette valeur<input id="fvIn" type="number" step="0.01" value="${o.fv??''}"></label>`;
+  $('sheet').classList.add('on');
+  $('close').onclick=()=>$('sheet').classList.remove('on');
+  $('fvIn').onchange=e=>{const v=+e.target.value;if(v>0)FV[t]=v;else delete FV[t];store.set('ev_fv',FV);sheet(t);render()};
+}
+
+function setState(c,txt){$('dot').style.background=c;$('stateTxt').textContent=txt}
+
+let rq=0;const later=()=>{if(!rq)rq=setTimeout(()=>{rq=0;render()},1500)};
+let wsC=null,wsF=null;const wsState={c:false,f:false};
+const wsLbl=()=>{$('wsTxt').textContent=(wsState.c?' · ⚡ Crypto temps réel (Binance)':'')+(wsState.f?' · ⚡ US temps réel (Finnhub)':'')};
+async function loadCrypto(){
+  let ok=0;const key=$('cgk').value.trim();
+  await Promise.all(Object.entries(CR).map(async([t,[b,g]])=>{if(LIVE[t]&&Date.now()-LIVE[t].ts<15*60e3){LIVE[t].bn=b+'EUR';return}let r=null;
+    for(const q of ['EUR','USDT']){try{const res=await fetch(BN+'/api/v3/klines?symbol='+b+q+'&interval=1d&limit=365');if(!res.ok)continue;
+      const k=await res.json();if(!Array.isArray(k)||k.length<20)continue;
+      r=calc(k.map(x=>+x[4]),k.map(x=>+x[2]),k.map(x=>+x[3]),+k[k.length-1][4],q==='EUR'?'EUR':'USD',1);if(r){r.bn=b+q;break}}catch(e){}}
+    if(!r){try{const j=await (await fetch('https://api.coingecko.com/api/v3/coins/'+g+'/market_chart?vs_currency=eur&days=365&interval=daily'+(key?'&x_cg_demo_api_key='+encodeURIComponent(key):''))).json();
+      const C=j.prices.map(x=>x[1]);r=calc(C,C,C,C[C.length-1],'EUR',1)}catch(e){}}
+    if(r){LIVE[t]=r;ok++}}));
+  return ok;
+}
+async function loadCryptoCG(){
+  const key=$('cgk').value.trim(),qs=key?'&x_cg_demo_api_key='+encodeURIComponent(key):'',base='https://api.coingecko.com/api/v3';
+  const ids=Object.values(CR).map(x=>x[1]);let mk;
+  try{const r=await fetch(base+'/coins/markets?vs_currency=eur&ids='+ids.join(',')+qs);if(!r.ok)return 0;mk=await r.json()}catch(e){return 0}
+  const today=new Date().toDateString();let ok=0;
+  for(const [t,[b,g]] of Object.entries(CR)){
+    const m=mk.find(x=>x.id===g);if(!m)continue;const p=m.current_price,prev=p/(1+(m.price_change_percentage_24h||0)/100);
+    const L=LIVE[t];
+    if(L&&L.src==='cg'&&L.hday===today){Object.assign(L,{p,prev,ts:Date.now()});ok++;continue}
+    try{const r=await fetch(base+'/coins/'+g+'/market_chart?vs_currency=eur&days=365&interval=daily'+qs);
+      if(r.ok){const j=await r.json();const C=j.prices.map(x=>x[1]);const z=calc(C,C,C,p,'EUR',1);
+        if(z){z.prev=prev;z.src='cg';z.hday=today;z.bn=b+'EUR';LIVE[t]=z;ok++}}
+      else if(L){Object.assign(L,{p,prev,c:'EUR',ts:Date.now()});ok++}
+    }catch(e){}
+    if(!key)await new Promise(z=>setTimeout(z,2500));
+  }
+  return ok;
+}
+function cryptoWS(){
+  try{if(wsC)wsC.close();const subs=Object.keys(CR).map(t=>LIVE[t]?.bn).filter(Boolean);if(!subs.length)return;
+    wsC=new WebSocket('wss://data-stream.binance.vision/stream?streams='+subs.map(x=>x.toLowerCase()+'@miniTicker').join('/'));
+    wsC.onopen=()=>{wsState.c=true;wsLbl()};wsC.onclose=()=>{wsState.c=false;wsLbl()};
+    wsC.onmessage=e=>{try{const d=JSON.parse(e.data).data;const t=Object.keys(CR).find(k=>LIVE[k]?.bn===d.s);if(t){LIVE[t].p=+d.c;LIVE[t].ts=Date.now();later()}}catch(x){}};
+  }catch(e){}
+}
+function finnhubWS(key){
+  try{if(wsF)wsF.close();const us=D.filter(x=>x.e==='CTO'&&/^[A-Z]+$/.test(x.t)).map(x=>x.t).slice(0,50);
+    wsF=new WebSocket('wss://ws.finnhub.io?token='+encodeURIComponent(key));
+    wsF.onopen=()=>{wsState.f=true;wsLbl();us.forEach(sy=>wsF.send(JSON.stringify({type:'subscribe',symbol:sy})))};
+    wsF.onclose=()=>{wsState.f=false;wsLbl()};
+    wsF.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.type!=='trade')return;for(const tr of m.data){const L=LIVE[tr.s]||(LIVE[tr.s]={c:'USD',prev:null});L.p=tr.p;L.ts=Date.now()}later()}catch(x){}};
+  }catch(e){}
+}
+async function loadRobot(){
+  try{const r=await fetch('data/data.json',{cache:'no-store'});if(!r.ok)return 0;const j=await r.json();
+    const ts=Date.parse(j.generated_utc);let n=0;
+    for(const [t,v] of Object.entries(j.rows)){if(CR[t]&&LIVE[t]&&LIVE[t].ts>ts)continue;LIVE[t]={...v,c:'EUR',ts,robot:true};n++}
+    return {n,ts}}catch(e){return 0}
+}
+async function refresh(){
+  const rb=await loadRobot();
+  if(rb&&rb.n&&Date.now()-rb.ts<4*3600e3){store.set('ev_live',LIVE);render();
+    setState('var(--go)',`Robot GitHub · ${rb.n} cours au ${new Date(rb.ts).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}`);
+    loadCryptoCG().then(n=>{if(n){render();cryptoWS()}});return}
+  const list=D.filter(x=>x.e!=='Crypto'&&!['SPACEX','ANTHROPIC'].includes(x.t)).map(x=>x.t);
+  const cryptoBackup=()=>loadCrypto().then(n=>{if(n){store.set('ev_live',LIVE);cryptoWS();render()}});
+  loadCryptoCG().then(n=>{if(n){store.set('ev_live',LIVE);render();cryptoWS()}if(n<Object.keys(CR).length)cryptoBackup()});
+  const fk=$('fhk').value.trim();if(fk&&!wsState.f)finnhubWS(fk);
+  setState('var(--near)','Connexion à Yahoo Finance…');
+  let ok=0,fail=0;
+  try{await getJSON(chartURL('EURUSD=X','5d'))}catch(e){
+    src=Object.keys(LIVE).length?'cache':'snap';
+    setState('var(--no)',src==='cache'?'Flux bloqué (CORS/proxys) : derniers cours mémorisés dans ce navigateur.':'Flux bloqué : instantané complet du 24/11/2026 ~20h30 (Yahoo + CoinGecko). Ouvre le fichier .html dans un navigateur pour le live.');
+    render();return}
+  const ccys=['USD','CHF','DKK','NOK','SEK','JPY','KRW','HKD','GBP'];
+  await Promise.all(ccys.map(async c=>{try{const j=await getJSON(chartURL('EUR'+c+'=X','5d'));FX[c]=j.chart.result[0].meta.regularMarketPrice}catch(e){}}));
+  store.set('ev_fx',FX);
+  let k=0;
+  const worker=async()=>{while(k<list.length){const t=list[k++];
+    try{const j=await getJSON(chartURL(t,'1y'));const r=indic(j.chart.result[0]);if(r){LIVE[t]=r;ok++}else fail++}catch(e){fail++}
+    setState('var(--near)',`Chargement ${ok+fail}/${list.length}…`)}};
+  await Promise.all(Array.from({length:6},worker));
+  store.set('ev_live',LIVE);src='live';
+  setState(fail?'var(--near)':'var(--go)',`Live · ${ok} cours à jour à ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}${fail?' · '+fail+' en échec (cache/instantané)':''}`);
+  render();
+  const key=$('fhk').value.trim();if(key)finnhub(key);
+}
+
+async function finnhub(key){
+  const us=D.filter(x=>x.e==='CTO'&&/^[A-Z]+$/.test(x.t));
+  for(const x of us){try{const r=await fetch('https://finnhub.io/api/v1/stock/metric?metric=all&symbol='+x.t+'&token='+encodeURIComponent(key));
+    if(r.ok){const j=await r.json();FH[x.t]={pe:j.metric?.peTTM??null,dy:j.metric?.dividendYieldIndicatedAnnual??null}}}catch(e){}
+    await new Promise(z=>setTimeout(z,1100))}
+  store.set('ev_fh',FH);render();
+}
+
+// init
+const secs=[...new Set(D.map(x=>x.s))];
+$('fSec').innerHTML='<option value="">Tous secteurs</option>'+secs.map(s=>`<option>${esc(s)}</option>`).join('');
+$('cash').value=store.get('ev_cash','2000');$('lineP').value=store.get('ev_lp',10);$('fhk').value=store.get('ev_fhk','');
+['fEnv','fSec','fSt','fQ','fDup'].forEach(id=>$(id).addEventListener('input',render));
+$('cash').addEventListener('input',()=>{store.set('ev_cash',$('cash').value);render()});
+$('lineP').addEventListener('input',()=>{store.set('ev_lp',$('lineP').value);render()});
+$('fhk').addEventListener('change',()=>{store.set('ev_fhk',$('fhk').value.trim());if($('fhk').value.trim())finnhubWS($('fhk').value.trim())});
+$('pxy').value=store.get('ev_pxy','');$('pxy').addEventListener('change',()=>{store.set('ev_pxy',$('pxy').value.trim());goodProxy=0});
+$('cgk').value=store.get('ev_cgk','');$('cgk').addEventListener('change',()=>store.set('ev_cgk',$('cgk').value.trim()));
+$('refresh').addEventListener('click',refresh);
+document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;sortDir=sortK===k?-sortDir:(k==='n'||k==='t'?1:-1);sortK=k;render()}));
+document.addEventListener('click',e=>{const r=e.target.closest('[data-t]');if(r&&!e.target.closest('#sheet'))sheet(r.dataset.t);if(e.target.id==='sheet')$('sheet').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').classList.remove('on')});
+render();refresh();
+setInterval(()=>{if(src==='live'&&!document.hidden)refresh()},($('pxy').value.trim()?5:15)*60*1000);
+}
+</script>
+</body>
+</html>

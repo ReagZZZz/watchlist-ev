@@ -1,0 +1,35 @@
+name: Mise à jour des cours
+
+on:
+  schedule:
+    - cron: "17 7-21/2 * * 1-5"   # toutes les 2 h en semaine (UTC), heures de bourse EU + US
+    - cron: "43 12 * * 0,6"        # une fois le week-end (crypto)
+  workflow_dispatch: {}            # bouton « Run workflow » pour un rafraîchissement manuel
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Récupérer les cours et calculer les signaux
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python scripts/fetch.py
+      - name: Publier les données
+        run: |
+          git config user.name "watchlist-robot"
+          git config user.email "watchlist-robot@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "Cours $(date -u +'%Y-%m-%d %H:%M') UTC"
+          git push
