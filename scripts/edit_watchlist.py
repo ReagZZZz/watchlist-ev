@@ -172,6 +172,7 @@ def main():
     if hit:
         reply("ℹ️ **%s** (`%s`) est déjà dans la watchlist." % (hit["n"], t), False)
     name = m.get("longName") or cand.get("longname") or cand.get("shortname") or m.get("shortName") or t
+    name = re.sub(r"\s+(Société en commandite par actions|Société anonyme|S\.?A\.?|SE|N\.?V\.?|AG|plc|PLC|Inc\.?|Corporation|Corp\.?|Ltd\.?|Limited|Holdings?|S\.p\.A\.?|A/S|ASA|AB \(publ\))\s*$", "", name).strip(" ,") or name
     env = env_in or auto_env(cand, t, name)
     sec_in = pick(f, "secteur")
     sec = sec_in if sec_in and sec_in != "Auto" else auto_sector(cand)

@@ -470,7 +470,7 @@ function finnhubWS(key){
   }catch(e){}
 }
 async function loadRobot(){
-  try{const r=await fetch('data/data.json',{cache:'no-store'});if(!r.ok)return 0;const j=await r.json();
+  try{const r=await fetch('data/data.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)return 0;const j=await r.json();
     const ts=Date.parse(j.generated_utc);let n=0;
     for(const [t,v] of Object.entries(j.rows)){if(CR[t]&&LIVE[t]&&LIVE[t].ts>ts)continue;LIVE[t]={...v,c:'EUR',ts,robot:true};n++}
     return {n,ts}}catch(e){return 0}
@@ -527,7 +527,7 @@ document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',
 document.addEventListener('click',e=>{const r=e.target.closest('[data-t]');if(r&&!e.target.closest('#sheet'))sheet(r.dataset.t);if(e.target.id==='sheet')$('sheet').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').classList.remove('on')});
 async function loadWL(){
-  try{const r=await fetch('watchlist.json',{cache:'no-store'});if(!r.ok)return false;const j=await r.json();if(!Array.isArray(j.rows)||!j.rows.length)return false;
+  try{const r=await fetch('watchlist.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)return false;const j=await r.json();if(!Array.isArray(j.rows)||!j.rows.length)return false;
     D=j.rows.map(x=>({t:x.t,n:x.n,s:x.s,e:x.e,i:x.i??null,o:x.o||'',th:x.th||'',mh:x.mh||'',r:Array.isArray(x.r)?x.r:String(x.r||'').split('|'),inv:x.inv||''}));
     for(const x of j.rows)if(x.cg&&!CR[x.t])CR[x.t]=[x.t.split('-')[0],x.cg];
     const ss=[...new Set(D.map(x=>x.s))];$('fSec').innerHTML='<option value="">Tous secteurs</option>'+ss.map(z=>`<option>${esc(z)}</option>`).join('');
