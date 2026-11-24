@@ -74,6 +74,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--acc);min-height:44px;
     <label>Proxy perso (Worker)<input id="pxy" type="url" placeholder="https://xxx.workers.dev" style="width:200px"></label>
     <label>Clé CoinGecko (optionnel)<input id="cgk" type="text" placeholder="crypto (recommandé)" style="width:140px"></label>
     <button id="refresh" class="pri">Rafraîchir</button>
+    <a id="addBtn" href="https://github.com/ReagZZZz/watchlist-ev/issues/new?template=ajouter-titre.yml" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink);text-decoration:none;font-weight:600">＋ Ajouter un titre</a>
   </div>
 </header>
 
@@ -115,7 +116,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--acc);min-height:44px;
 <script>
 {
 // [ticker, nom, secteur, enveloppe, impact(0-10|null), doublon, thèse, vents contraires, risques a|b|c, invalidation]
-const D=[
+let D=[
 ['MC.PA','LVMH','Luxe','PEA',4,'Déjà détenu','N°1 mondial du luxe, pricing power, bilan solide, FCF élevé.','Luxe aspirationnel en panne (Chine, US), euro fort.','Chine durablement faible|Effet de change USD|Succession Arnault','Croissance organique négative 4 trimestres de suite'],
 ['KER.PA','Kering','Luxe','PEA',4,'','Pari de redressement de Gucci, forte décote vs pairs.','Bas de cycle du luxe, dette élevée.','Échec du relaunch Gucci|Endettement|Cessions forcées','Marge Gucci < 10 % durablement'],
 ['OR.PA',"L'Oréal",'Luxe','PEA',5,'','Leader mondial de la beauté, ROIC > WACC durable.','Chine molle, multiple historiquement élevé.','Normalisation post-boom beauté|Travel retail|Valorisation','Croissance organique < 3 % sur 12 mois'],
@@ -304,7 +305,7 @@ const SNAP={
 'ADA-EUR':{"p":0.14481,"prev":0.149066,"ma50":0.192463,"ma200":0.199983,"hi52":0.4702,"lo52":0.1426,"rsi":28,"atr":0.004613,"c":"USD","d":"24/11 20h30 (CoinGecko)"},
 'DOGE-EUR':{"p":0.055348,"prev":0.056962,"ma50":0.072207,"ma200":0.082042,"hi52":0.15271,"lo52":0.05521,"rsi":25,"atr":0.001547,"c":"USD","d":"24/11 20h30 (CoinGecko)"}
 };
-const CR={'BTC-EUR':['BTC','bitcoin'],'ETH-EUR':['ETH','ethereum'],'SOL-EUR':['SOL','solana'],'XRP-EUR':['XRP','ripple'],'BNB-EUR':['BNB','binancecoin'],'LINK-EUR':['LINK','chainlink'],'ADA-EUR':['ADA','cardano'],'DOGE-EUR':['DOGE','dogecoin']};
+let CR={'BTC-EUR':['BTC','bitcoin'],'ETH-EUR':['ETH','ethereum'],'SOL-EUR':['SOL','solana'],'XRP-EUR':['XRP','ripple'],'BNB-EUR':['BNB','binancecoin'],'LINK-EUR':['LINK','chainlink'],'ADA-EUR':['ADA','cardano'],'DOGE-EUR':['DOGE','dogecoin']};
 const BN='https://data-api.binance.vision';
 const FX0={EUR:1,USD:1.097,CHF:0.9161,DKK:7.4742,NOK:10.736,SEK:11.2216,JPY:174.636,KRW:1472.1,HKD:8.5994,GBP:0.8361}; // taux Yahoo du 24/11 ~20h30 // repli EUR/USD du 24/11 ; autres devises seulement via le flux live
 
@@ -525,7 +526,14 @@ $('refresh').addEventListener('click',refresh);
 document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;sortDir=sortK===k?-sortDir:(k==='n'||k==='t'?1:-1);sortK=k;render()}));
 document.addEventListener('click',e=>{const r=e.target.closest('[data-t]');if(r&&!e.target.closest('#sheet'))sheet(r.dataset.t);if(e.target.id==='sheet')$('sheet').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').classList.remove('on')});
-render();refresh();
+async function loadWL(){
+  try{const r=await fetch('watchlist.json',{cache:'no-store'});if(!r.ok)return false;const j=await r.json();if(!Array.isArray(j.rows)||!j.rows.length)return false;
+    D=j.rows.map(x=>({t:x.t,n:x.n,s:x.s,e:x.e,i:x.i??null,o:x.o||'',th:x.th||'',mh:x.mh||'',r:Array.isArray(x.r)?x.r:String(x.r||'').split('|'),inv:x.inv||''}));
+    for(const x of j.rows)if(x.cg&&!CR[x.t])CR[x.t]=[x.t.split('-')[0],x.cg];
+    const ss=[...new Set(D.map(x=>x.s))];$('fSec').innerHTML='<option value="">Tous secteurs</option>'+ss.map(z=>`<option>${esc(z)}</option>`).join('');
+    return true}catch(e){return false}
+}
+render();loadWL().then(()=>{render();refresh()});
 setInterval(()=>{if(src==='live'&&!document.hidden)refresh()},($('pxy').value.trim()?5:15)*60*1000);
 }
 </script>

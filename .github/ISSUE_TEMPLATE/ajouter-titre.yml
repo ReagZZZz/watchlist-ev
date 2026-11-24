@@ -1,0 +1,78 @@
+name: Ajouter un titre à la watchlist
+description: Le robot vérifie le ticker sur Yahoo Finance, l'ajoute à watchlist.json et met les cours à jour.
+title: "Ajouter : "
+labels: ["ajout-watchlist"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Seul le propriétaire du dépôt peut ajouter un titre. Le robot répond en commentaire puis ferme la demande (environ 1 minute).
+        Ticker Yahoo exact, avec le suffixe de place : `.PA` Paris, `.AS` Amsterdam, `.DE` Francfort, `.MI` Milan, `.ST` Stockholm, `.CO` Copenhague, `.OL` Oslo, `.SW` Zurich, `.L` Londres, `.T` Tokyo, `.HK` Hong Kong, `.KS` Séoul. Rien pour les actions US. Crypto : `XXX-EUR`.
+  - type: input
+    id: ticker
+    attributes:
+      label: Ticker Yahoo
+      placeholder: "ex. HO.PA, MSFT, BTC-EUR"
+    validations:
+      required: true
+  - type: input
+    id: nom
+    attributes:
+      label: Nom (laisser vide pour le remplir automatiquement)
+  - type: dropdown
+    id: secteur
+    attributes:
+      label: Secteur
+      options:
+        - Luxe
+        - Conso
+        - Agro
+        - Santé
+        - Logiciels
+        - Paiements
+        - Semi-conducteurs
+        - Big Tech
+        - Défense & Aéro
+        - Industrie
+        - Énergie
+        - Mobilité
+        - Finance
+        - Immobilier
+        - Matières premières
+        - ETF & couverture
+        - Crypto
+    validations:
+      required: true
+  - type: dropdown
+    id: enveloppe
+    attributes:
+      label: Enveloppe
+      options:
+        - PEA
+        - "PEA* (EEE, selon le courtier)"
+        - CTO
+        - AV
+        - Crypto
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact sur mon patrimoine (0 = doublon, 10 = diversification idéale)
+      options: ["5", "0", "1", "2", "3", "4", "6", "7", "8", "9", "10"]
+    validations:
+      required: true
+  - type: input
+    id: doublon
+    attributes:
+      label: Doublon avec mes lignes (optionnel)
+      placeholder: "ex. Déjà détenu, poids lourd MSCI World, thème agro…"
+  - type: textarea
+    id: these
+    attributes:
+      label: Thèse en une phrase (optionnel, l'analyse du dimanche la complétera)
+  - type: input
+    id: coingecko
+    attributes:
+      label: Identifiant CoinGecko (crypto seulement, optionnel)
+      placeholder: "ex. bitcoin, ethereum"

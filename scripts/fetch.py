@@ -104,6 +104,10 @@ def main():
             r = coingecko(w["cg"]); time.sleep(3)
         if not r:
             fails.append(t); continue
+        if r["c"] not in fx:
+            z = yahoo("EUR%s=X" % r["c"])
+            if z:
+                fx[r["c"]] = z["p"]
         f = fx.get(r["c"])
         if not f:
             fails.append(t); continue

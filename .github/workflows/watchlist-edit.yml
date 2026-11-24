@@ -1,0 +1,61 @@
+name: Modifier la watchlist
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  edit:
+    # Uniquement les demandes du propriétaire du dépôt (le dépôt est public)
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      (startsWith(github.event.issue.title, 'Ajouter') ||
+       startsWith(github.event.issue.title, 'Retirer'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Appliquer la demande
+        id: edit
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ACTION: ${{ startsWith(github.event.issue.title, 'Retirer') && 'remove' || 'add' }}
+        run: |
+          set +e
+          python scripts/edit_watchlist.py
+          code=$?
+          echo "changed=$([ $code -eq 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          [ $code -eq 0 ] || [ $code -eq 10 ]
+      - name: Mettre à jour les cours
+        if: steps.edit.outputs.changed == 'true'
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python scripts/fetch.py
+      - name: Publier
+        if: steps.edit.outputs.changed == 'true'
+        run: |
+          git config user.name "watchlist-robot"
+          git config user.email "watchlist-robot@users.noreply.github.com"
+          git add watchlist.json data/
+          git commit -m "Watchlist : ${{ github.event.issue.title }} (#${{ github.event.issue.number }})"
+          git pull --rebase -q origin main
+          git push
+      - name: Répondre et fermer la demande
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f reply.md ] || echo "❌ Le robot a rencontré une erreur : voir l'onglet Actions." > reply.md
+          gh issue comment ${{ github.event.issue.number }} --repo ${{ github.repository }} --body-file reply.md
+          gh issue close ${{ github.event.issue.number }} --repo ${{ github.repository }}

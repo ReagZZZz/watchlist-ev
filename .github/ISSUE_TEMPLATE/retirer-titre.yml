@@ -1,0 +1,16 @@
+name: Retirer un titre de la watchlist
+description: Le robot retire le ticker de watchlist.json.
+title: "Retirer : "
+labels: ["retrait-watchlist"]
+body:
+  - type: input
+    id: ticker
+    attributes:
+      label: Ticker Yahoo à retirer
+      placeholder: "ex. FNOX.ST"
+    validations:
+      required: true
+  - type: input
+    id: raison
+    attributes:
+      label: Raison (optionnel)
