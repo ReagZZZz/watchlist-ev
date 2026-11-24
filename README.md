@@ -24,7 +24,7 @@ Dashboard de suivi de ma watchlist (actions PEA/CTO, ETF, crypto) avec prix d'en
 
 ## Ajouter ou retirer un titre
 
-**Depuis le téléphone** : bouton « ＋ Ajouter un titre » du dashboard, ou onglet *Issues* → *New issue* → **Ajouter un titre à la watchlist** (ou **Retirer un titre**). Le robot vérifie le ticker sur Yahoo, met à jour `watchlist.json`, relance le calcul des cours, répond en commentaire et ferme la demande. Seules les demandes du propriétaire du dépôt sont traitées.
+**Depuis le téléphone** : bouton « ＋ Ajouter un titre » du dashboard, ou onglet *Issues* → *New issue* → **Ajouter un titre à la watchlist** (ou **Retirer un titre**). Il suffit de taper le nom de l'entreprise : le robot trouve le ticker sur Yahoo (en privilégiant la cotation européenne si tu choisis le PEA), déduit l'enveloppe et le secteur, met à jour `watchlist.json`, relance le calcul des cours, répond en commentaire et ferme la demande. Seules les demandes du propriétaire du dépôt sont traitées.
 
 **À la main** : 
 Modifier `watchlist.json` (ticker Yahoo exact, avec le suffixe de place : `.PA`, `.AS`, `.DE`, `.MI`, `.ST`, `.CO`, `.OL`, `.SW`, `.L`, `.T`, `.HK`, `.KS`). Pour une crypto : ticker `XXX-EUR` et champ `cg` = identifiant CoinGecko.

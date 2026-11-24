@@ -1,29 +1,26 @@
 name: Ajouter un titre à la watchlist
-description: Le robot vérifie le ticker sur Yahoo Finance, l'ajoute à watchlist.json et met les cours à jour.
-title: "Ajouter : "
+description: Tape juste le nom de l'entreprise. Le robot trouve le ticker, l'enveloppe et le secteur, l'ajoute et met les cours à jour.
+title: "Ajouter"
 labels: ["ajout-watchlist"]
 body:
   - type: markdown
     attributes:
       value: |
-        Seul le propriétaire du dépôt peut ajouter un titre. Le robot répond en commentaire puis ferme la demande (environ 1 minute).
-        Ticker Yahoo exact, avec le suffixe de place : `.PA` Paris, `.AS` Amsterdam, `.DE` Francfort, `.MI` Milan, `.ST` Stockholm, `.CO` Copenhague, `.OL` Oslo, `.SW` Zurich, `.L` Londres, `.T` Tokyo, `.HK` Hong Kong, `.KS` Séoul. Rien pour les actions US. Crypto : `XXX-EUR`.
+        Tape le **nom de l'entreprise** (ex. « Hermès », « Microsoft », « Solana »). Tout le reste est facultatif : laisse « Auto » et le robot choisit.
+        Il répond en commentaire avec le titre trouvé et les autres correspondances, puis ferme la demande (environ 1 minute).
   - type: input
     id: ticker
     attributes:
-      label: Ticker Yahoo
-      placeholder: "ex. HO.PA, MSFT, BTC-EUR"
+      label: Entreprise (nom ou ticker)
+      placeholder: "ex. Hermès, Microsoft, Solana"
     validations:
       required: true
-  - type: input
-    id: nom
-    attributes:
-      label: Nom (laisser vide pour le remplir automatiquement)
   - type: dropdown
     id: secteur
     attributes:
       label: Secteur
       options:
+        - Auto
         - Luxe
         - Conso
         - Agro
@@ -48,6 +45,7 @@ body:
     attributes:
       label: Enveloppe
       options:
+        - Auto
         - PEA
         - "PEA* (EEE, selon le courtier)"
         - CTO
@@ -71,8 +69,3 @@ body:
     id: these
     attributes:
       label: Thèse en une phrase (optionnel, l'analyse du dimanche la complétera)
-  - type: input
-    id: coingecko
-    attributes:
-      label: Identifiant CoinGecko (crypto seulement, optionnel)
-      placeholder: "ex. bitcoin, ethereum"
